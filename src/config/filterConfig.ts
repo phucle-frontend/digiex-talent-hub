@@ -11,136 +11,101 @@ export interface FilterField {
   options: FilterOption[];
 }
 
-export const filterFields: FilterField[] = [
+export const filterFields = [
   {
-    key: "nationality",
-    label: "Nationality",
-    options: [
-      { value: "All", label: "All" },
-      { value: "Vietnam", label: "Vietnam" },
-      { value: "USA", label: "USA" },
-      { value: "Japan", label: "Japan" },
-    ],
+    type: 'skills',
+    key: 'skills',
+    label: 'Skills',
+    value: [
+      {name: 'Android', yoe: 6, competency: 'EXPERT'},
+      {name: 'Angular', yoe: 2, competency: 'ADVANCED'},
+      {name: 'React', yoe: 3, competency: 'EXPERT'},
+      {name: 'Java', yoe: 4, competency: 'ADVANCED'},
+    ]
   },
   {
-    key: "skills",
-    label: "Skills",
-    options: [
-      { value: "All", label: "All" },
-      { value: "React/Typescript", label: "React/Typescript" },
-      { value: "Java/SQL", label: "Java/SQL" },
-    ],
+    type: 'checkboxes',
+    key: 'position',
+    label: 'Position',
+    options: ['3D Artist/Design', 'AI Engineer', 'Backend Engineer', 'Cloud Engineer', 'CTO', 'Data Analyst']
   },
   {
-    key: "status",
-    label: "Status",
-    options: [
-      { value: "All", label: "All" },
-      {
-        value: "Active",
-        label: "Active",
-        hasDot: true,
-        dotColor: "bg-green-500",
-      },
-      { value: "Inactive", label: "Inactive" },
-    ],
+    type: 'range',
+    key: 'totalExps',
+    label: 'Total Experience',
+    from: 0,
+    to: 14
+  },
+   {
+    type: 'checkboxes',
+    key: 'talentLevel',
+    label: 'Level',
+    options: [1, 2, 3, 4, 5]
+  },
+   {
+    type: 'checkboxes',
+    key: 'partners',
+    label: 'Partners',
+    options: ['Aloha', 'Manh', 'New Partner']
   },
   {
-    key: "cvStatus",
-    label: "CV Status",
-    options: [
-      { value: "All", label: "All" },
-      {
-        value: "Uploaded",
-        label: "Uploaded",
-        hasDot: true,
-        dotColor: "bg-green-500",
-      },
-      { value: "Unuploaded", label: "Unuploaded" },
-    ],
+    type: 'radio',
+    key: 'availability',
+    label: 'Job Availability',
+    options: ['Available', 'Unavailable']
   },
   {
-    key: "totalExps",
-    label: "Total Exps",
-    options: [
-      { value: "All", label: "All" },
-      { value: "0-1", label: "0-1 Years" },
-      { value: "1-3", label: "1-3 Years" },
-      { value: "3-5", label: "3-5 Years" },
-      { value: "5+", label: "5+ Years" },
-    ],
+    type: 'radio',
+    key: 'verifiedProfile',
+    label: 'Verify Profile',
+    options: ['Verified', 'Not Verified']
   },
   {
-    key: "talentLevel",
-    label: "Talent Level",
-    options: [
-      { value: "All", label: "All" },
-      { value: "1", label: "Level 1" },
-      { value: "2", label: "Level 2" },
-      { value: "3", label: "Level 3" },
-      { value: "4", label: "Level 4" },
-    ],
+    type: 'radio',
+    key: 'profileStatus',
+    label: 'Profile Status',
+    options: ['Manual', 'Automatic']
+  },
+   {
+    type: 'checkboxes',
+    key: 'language',
+    label: 'Language',
+    options: ['Vietnamese', 'English']
+  },
+   {
+    type: 'checkboxes',
+    key: 'talentStatus',
+    label: 'Talent Status',
+    options: ['Pending', 'Active']
+  },
+   {
+    type: 'radio',
+    key: 'internal',
+    label: 'Internal',
+    options: ['LinkedIn', 'Internal', 'External']
   },
   {
-    key: "backgroundInterview",
-    label: "Background Interview",
-    options: [
-      { value: "All", label: "All" },
-      { value: "1", label: "0.0-1.0" },
-      { value: "2", label: "1.0-2.0" },
-      { value: "3", label: "2.0-3.0" },
-      { value: "4", label: "3.0-4.0" },
-      { value: "5", label: "4.0-5.0" },
-    ],
-  },
-  {
-    key: "technicalInterview",
-    label: "Technical Interview",
-    options: [
-      { value: "All", label: "All" },
-      { value: "1", label: "0.0-1.0" },
-      { value: "2", label: "1.0-2.0" },
-      { value: "3", label: "2.0-3.0" },
-      { value: "4", label: "3.0-4.0" },
-      { value: "5", label: "4.0-5.0" },
-    ],
-  },
-  {
-    key: "hired",
-    label: "Hired",
-    options: [
-      { value: "All", label: "All" },
-      {
-        value: "Hired",
-        label: "Hired",
-        hasDot: true,
-        dotColor: "bg-green-500",
-      },
-      { value: "Not Hired", label: "Not Hired" },
-    ],
-  },
-  {
-    key: "profile",
-    label: "Profile",
-    options: [
-      { value: "All", label: "All" },
-      { value: "Complete", label: "Complete" },
-      { value: "Incomplete", label: "Incomplete" },
-    ],
-  },
+    type: 'date_picker',
+    key: 'createdDate',
+    label: 'Created Date',
+    from: 'Mon Aug 20 2025 15:01:43 GMT+0700 (Indochina Time)',
+    to: 'Mon Oct 20 2025 15:01:43 GMT+0700 (Indochina Time)'
+  }
 ];
 
-export const defaultFilters = {
-  nationality: "All",
-  skills: "All",
-  status: "All",
-  cvStatus: "All",
-  totalExps: "All",
-  talentLevel: "All",
-  backgroundInterview: "All",
-  technicalInterview: "All",
-  hired: "All",
-  profile: "All",
-} as const;
+export const defaultFilters: Record<string, string[]> = {
+  skills: [],
+  position: [],
+  totalExps: [],
+  talentLevel: [],
+  partners: [],
+  availability: [],
+  verifiedProfile: [],
+  profileStatus: [],
+  language: [],
+  talentStatus: [],
+  internal: [],
+  createdDate: [],
+};
 
 export type FilterValues = typeof defaultFilters;

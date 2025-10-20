@@ -5,7 +5,7 @@ export const handleFilterTalents = ({
   filterValues,
 }: {
   search: string;
-  filterValues: Record<string, string>;
+  filterValues: Record<string, string[]>;
 }) => {
   return talents
     .filter((t) => {
@@ -16,96 +16,93 @@ export const handleFilterTalents = ({
         t.name.email.toLowerCase().includes(q) ||
         t.phoneNumber.toLowerCase().includes(q) ||
         t.nationality.toLowerCase().includes(q) ||
-        t.skills.toLowerCase().includes(q)
+        (t.skills && t.skills.some(skill => skill.toLowerCase().includes(q)))
       );
     })
     .filter((t) => {
       const f = filterValues;
-      if (
-        f.nationality &&
-        f.nationality !== "All" &&
-        t.nationality !== f.nationality
-      )
-        return false;
-      if (
-        f.skills &&
-        f.skills !== "All" &&
-        t.skills.toLowerCase() !== f.skills.toLowerCase()
-      )
-        return false;
-      if (f.status && f.status !== "All") {
-        const desired = f.status === "Active" ? "Available" : "Unavailable";
-        if (t.status !== desired) return false;
+      
+      // Skills filter
+      if (f.skills && f.skills.length > 0) {
+        const talentSkills = t.skills || [];
+        const hasMatchingSkill = f.skills.some(skill => 
+          talentSkills.some(talentSkill => 
+            talentSkill.toLowerCase().includes(skill.toLowerCase())
+          )
+        );
+        if (!hasMatchingSkill) return false;
       }
-      if (f.cvStatus && f.cvStatus !== "All") {
-        if (f.cvStatus === "Uploaded" && !t.isCvUploaded) return false;
-        if (f.cvStatus === "Unuploaded" && t.isCvUploaded) return false;
+      
+      // Position filter
+      if (f.position && f.position.length > 0) {
+        if (!f.position.includes(t.position)) return false;
       }
-      if (f.hired && f.hired !== "All") {
-        const wantHired = f.hired === "Hired";
-        if (t.isHired !== wantHired) return false;
-      }
-      if (f.totalExps && f.totalExps !== "All") {
+      
+      // Total Experience filter
+      if (f.totalExps && f.totalExps.length > 0) {
         const years = t.totalExps;
-        switch (f.totalExps) {
-          case "0-1":
-            if (!(years >= 0 && years < 1)) return false;
-            break;
-          case "1-3":
-            if (!(years >= 1 && years < 3)) return false;
-            break;
-          case "3-5":
-            if (!(years >= 3 && years < 5)) return false;
-            break;
-          case "5+":
-            if (!(years >= 5)) return false;
-            break;
+        const matchesRange = f.totalExps.some(range => {
+          const rangeNum = parseInt(range);
+          return years >= rangeNum && years < rangeNum + 1;
+        });
+        if (!matchesRange) return false;
+      }
+      
+      // Talent Level filter
+      if (f.talentLevel && f.talentLevel.length > 0) {
+        if (!f.talentLevel.includes(t.talentLevel.toString())) return false;
+      }
+      
+      // Partners filter
+      if (f.partners && f.partners.length > 0) {
+        if (!f.partners.includes(t.partner || "")) return false;
+      }
+      
+      // Availability filter
+      if (f.availability && f.availability.length > 0) {
+        if (!f.availability.includes(t.availability)) return false;
+      }
+      
+      // Verified Profile filter
+      if (f.verifiedProfile && f.verifiedProfile.length > 0) {
+        const isVerified = f.verifiedProfile.includes("Verified");
+        if (isVerified && !t.isVerifiedProfile) return false;
+        if (!isVerified && t.isVerifiedProfile) return false;
+      }
+      
+      // Language filter
+      if (f.language && f.language.length > 0) {
+        const talentLanguages = t.language || [];
+        const hasMatchingLanguage = f.language.some(lang => 
+          talentLanguages.includes(lang)
+        );
+        if (!hasMatchingLanguage) return false;
+      }
+      
+      // Talent Status filter
+      if (f.talentStatus && f.talentStatus.length > 0) {
+        if (!f.talentStatus.includes(t.status)) return false;
+      }
+      
+      // Internal filter
+      if (f.internal && f.internal.length > 0) {
+        if (!f.internal.includes(t.internal || "")) return false;
+      }
+      
+      // Created Date filter
+      if (f.createdDate && f.createdDate.length > 0) {
+        const dateRange = f.createdDate[0];
+        if (dateRange && dateRange.includes('-')) {
+          const [fromStr, toStr] = dateRange.split('-');
+          if (fromStr && toStr) {
+            const fromDate = new Date(fromStr);
+            const toDate = new Date(toStr);
+            const talentDate = new Date(t.createdDate);
+            if (talentDate < fromDate || talentDate > toDate) return false;
+          }
         }
       }
-      if (f.talentLevel && f.talentLevel !== "All") {
-        const level = Number(f.talentLevel);
-        if (Number.isFinite(level) && t.talentLevel !== level) return false;
-      }
-      if (f.backgroundInterview && f.backgroundInterview !== "All") {
-        const score = Number(t.backgroundInterview.score);
-        switch (f.backgroundInterview) {
-          case "1":
-            if (!(score >= 0.0 && score < 1.0)) return false;
-            break;
-          case "2":
-            if (!(score >= 1.0 && score < 2.0)) return false;
-            break;
-          case "3":
-            if (!(score >= 2.0 && score < 3.0)) return false;
-            break;
-          case "4":
-            if (!(score >= 3.0 && score < 4.0)) return false;
-            break;
-          case "5":
-            if (!(score >= 4.0 && score <= 5.0)) return false;
-            break;
-        }
-      }
-      if (f.technicalInterview && f.technicalInterview !== "All") {
-        const score = Number(t.technicalInterview.score);
-        switch (f.technicalInterview) {
-          case "1":
-            if (!(score >= 0.0 && score < 1.0)) return false;
-            break;
-          case "2":
-            if (!(score >= 1.0 && score < 2.0)) return false;
-            break;
-          case "3":
-            if (!(score >= 2.0 && score < 3.0)) return false;
-            break;
-          case "4":
-            if (!(score >= 3.0 && score < 4.0)) return false;
-            break;
-          case "5":
-            if (!(score >= 4.0 && score <= 5.0)) return false;
-            break;
-        }
-      }
+      
       return true;
     });
 };

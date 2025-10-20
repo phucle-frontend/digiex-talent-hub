@@ -1,16 +1,16 @@
-import SearchInput from "@/components/SearchInput";
 import { TabCustom } from "../components/TabCustom";
-import { FilterSection } from "../components/FilterSection";
 import {
   CircleX,
-  Cloud,
   Copy,
-  Eye,
   FileDown,
   ListFilter,
   SquarePlus,
+  SearchIcon,
+  CircleCheck,
+  CircleMinus,
+  PanelRight,
 } from "lucide-react";
-import {  useState } from "react";
+import { useState } from "react";
 import {
   Pagination,
   PaginationContent,
@@ -21,7 +21,8 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Button } from "@/components/ui/button";
-import { defaultFilters } from "@/config/filterConfig";
+import { defaultFilters, filterFields } from "@/config/filterConfig";
+import { CollapsibleFilterField } from "@/components/CollapsibleFilterField";
 import {
   Table,
   TableBody,
@@ -33,136 +34,221 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import ButtonIcon from "@/components/ButtonIcon";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import BadgeCustom from "@/components/BadgeCustom";
 import { handleFilterTalents } from "@/lib/common";
 
+const SkillsDisplay = ({ skills }: { skills: string[] | null }) => {
+  if (!skills || skills.length === 0) return <span>-</span>;
+
+  const displaySkills = skills.slice(0, 2);
+  const remainingCount = skills.length - 2;
+
+  return (
+    <div className="flex items-center gap-1">
+      {displaySkills.map((skill, index) => (
+        <BadgeCustom
+          key={index}
+          title={skill}
+          color="green"
+          condition={true}
+          className="text-xs"
+        />
+      ))}
+      {remainingCount > 0 && (
+        <BadgeCustom
+          title={`+${remainingCount}`}
+          color="gray"
+          condition={false}
+          className="text-xs"
+        />
+      )}
+    </div>
+  );
+};
+
 const TalentsTable = ({
-  isExpanded,
   search,
   filterValues,
 }: {
-  isExpanded: boolean;
   search: string;
-  filterValues: Record<string, string>;
+  filterValues: Record<string, string[]>;
 }) => {
   return (
-    <Table className="w-full">
+    <Table className="max-w-[600px]">
       <TableHeader className={`bg-gray-50`}>
         <TableRow>
-          <TableHead className="w-[100px] text-start">Name</TableHead>
-          <TableHead className="text-start">Nationality</TableHead>
-          <TableHead className="text-start">Phone Number</TableHead>
-          <TableHead className="text-start">Type</TableHead>
-          <TableHead className="text-start">Total Epxs</TableHead>
-          <TableHead className="text-start">Talent Level</TableHead>
-          {isExpanded && (
-            <>
-              <TableHead className="text-start">Skills</TableHead>
-              <TableHead className="text-start">CV</TableHead>
-              <TableHead className="text-start">Background Interview</TableHead>
-              <TableHead className="text-start">Technical Interview</TableHead>
-              <TableHead className="text-start">Status</TableHead>
-              <TableHead className="text-start">Hired</TableHead>
-              <TableHead className="text-start">Profile</TableHead>
-              <TableHead className="text-start">Created</TableHead>
-              <TableHead className="text-start">Updated</TableHead>
-              <TableHead className="text-start">Source</TableHead>
-            </>
-          )}
-          {!isExpanded && <TableHead className="text-start"></TableHead>}
+          <TableHead className="w-[140px] text-start">Name</TableHead>
+          <TableHead className="w-[50px] text-start">Level</TableHead>
+          <TableHead className="w-[80px] text-start">Skills</TableHead>
+          <TableHead className="w-[40px] text-start">YoE</TableHead>
+          <TableHead className="w-[80px] text-start">Availability</TableHead>
+          <TableHead className="w-[80px] text-start">
+            Profile Feedback
+          </TableHead>
+          <TableHead className="w-[70px] text-start">Partner</TableHead>
+          <TableHead className="w-[70px] text-start">Background</TableHead>
+          <TableHead className="w-[70px] text-start">Technical</TableHead>
+          <TableHead className="w-[70px] text-start">Internal</TableHead>
+          <TableHead className="w-[40px] text-start">Hired</TableHead>
+          <TableHead className="w-[80px] text-start">
+            Verified Profile
+          </TableHead>
+          <TableHead className="w-[80px] text-start">Created Date</TableHead>
+          <TableHead className="w-[80px] text-start">Updated</TableHead>
+          <TableHead className="w-[80px] text-start">Status</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {handleFilterTalents({ search, filterValues }).map((talent) => (
           <TableRow key={talent.name.id}>
-            <TableCell className="font-medium text-start flex h-full gap-2">
-              <Avatar>
-                <AvatarImage src={talent.name.avatar} />
-                <AvatarFallback>{talent.name.name.charAt(0)}</AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col flex-1 flex-start justify-center">
-                <span className="font-semibold">{talent.name.name}</span>
-                <span className="text-xs font-thin text-muted-foreground">
-                  {talent.name.email}
-                </span>
+            <TableCell className="font-medium text-start w-[140px]">
+              <div className="flex items-center gap-2">
+                <Avatar className="w-8 h-8 flex-shrink-0">
+                  <AvatarImage src={talent.name.avatar} />
+                  <AvatarFallback>{talent.name.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col min-w-0 flex-1">
+                  <span className="font-semibold truncate">
+                    {talent.name.name}
+                  </span>
+                  <span className="text-xs font-thin text-muted-foreground truncate">
+                    {talent.name.email}
+                  </span>
+                </div>
+                <ButtonIcon icon={<Copy />} />
               </div>
-              <ButtonIcon icon={<Copy />} />
             </TableCell>
-            <TableCell className="text-start">{talent.nationality}</TableCell>
-            <TableCell className="text-start lg:max-w-48 gap-2 justify-between">
-              <span className="flex-1">{talent.phoneNumber}</span>
-              <ButtonIcon icon={<Copy />} />
+            <TableCell className="text-start w-[50px]">
+              <span className="truncate block">Level {talent.talentLevel}</span>
             </TableCell>
-            <TableCell className="text-start ">
+            <TableCell className="text-start w-[80px]">
+              <SkillsDisplay skills={talent.skills} />
+            </TableCell>
+            <TableCell className="text-start w-[40px]">
+              <span className="truncate block">
+                {talent.yoe
+                  ? `${talent.yoe} Year${talent.yoe > 1 ? "s" : ""}`
+                  : "-"}
+              </span>
+            </TableCell>
+            <TableCell className="text-start w-[80px]">
               <BadgeCustom
-                title={talent.type}
-                color={talent.type === "ODC" ? "green" : "blue"}
+                title={talent.availability}
+                color={talent.availability === "Available" ? "green" : "gray"}
                 condition={true}
+                className="text-xs"
               />
             </TableCell>
-            <TableCell className="text-start ">
-              {talent.totalExps} Year{talent.totalExps > 1 ? "s" : ""}
+            <TableCell className="text-start w-[80px]">
+              {talent.profileFeedback ? (
+                <BadgeCustom
+                  title={talent.profileFeedback}
+                  color={
+                    talent.profileFeedback === "Very Good"
+                      ? "green"
+                      : talent.profileFeedback === "Good"
+                      ? "blue"
+                      : "amber"
+                  }
+                  condition={true}
+                  className="text-xs"
+                />
+              ) : (
+                "-"
+              )}
             </TableCell>
-            <TableCell className="text-start ">
-              Level {talent.talentLevel}
+            <TableCell className="text-start w-[70px]">
+              <span className="truncate block">{talent.partner || "-"}</span>
             </TableCell>
-            {!isExpanded && (
-              <TableCell className="text-start flex items-center justify-center">
-                <ButtonIcon icon={<Eye />} />
-                <ButtonIcon icon={<Cloud />} />
-              </TableCell>
-            )}
-            {isExpanded && (
-              <>
-                <TableCell className="text-start ">{talent.skills}</TableCell>
-                <TableCell className="text-start ">
-                  <BadgeCustom
-                    title={talent.isCvUploaded ? "Uploaded" : "Unuploaded"}
-                    color={talent.isCvUploaded ? "green" : "red"}
-                    condition={true}
-                  />
-                </TableCell>
-                <TableCell className="text-start ">
-                  {talent.backgroundInterview.score} out of{" "}
-                  {talent.backgroundInterview.cappedScore}
-                  {" | "}
-                  {+talent.backgroundInterview.score /
-                    +talent.backgroundInterview.cappedScore >=
-                  0.8
-                    ? "Good"
-                    : "Bad"}
-                </TableCell>
-                <TableCell className="text-start ">
-                  {talent.technicalInterview.score} out of{" "}
-                  {talent.technicalInterview.cappedScore}
-                  {" | "}
-                  {+talent.technicalInterview.score /
-                    +talent.technicalInterview.cappedScore >=
-                  0.8
-                    ? "Good"
-                    : "Bad"}
-                </TableCell>
-                <TableCell className="text-start ">
-                  <BadgeCustom
-                    title={talent.status}
-                    color={talent.status === "Available" ? "green" : "red"}
-                    condition={true}
-                  />
-                </TableCell>
-                <TableCell className="text-start ">
-                  {talent.isHired ? 1 : 0}
-                </TableCell>
-                <TableCell className="text-start ">{talent.profile}</TableCell>
-                <TableCell className="text-start ">
-                  {talent.createdDate.toLocaleDateString("en-GB")}
-                </TableCell>
-                <TableCell className="text-start ">
-                  {talent.updatedDate.toLocaleDateString("en-GB")}
-                </TableCell>
-                <TableCell className="text-start ">{talent.source}</TableCell>
-              </>
-            )}
+            <TableCell className="text-start w-[70px]">
+              {talent.background ? (
+                <BadgeCustom
+                  title={talent.background}
+                  color={
+                    talent.background === "Very Good"
+                      ? "green"
+                      : talent.background === "Good"
+                      ? "blue"
+                      : "amber"
+                  }
+                  condition={true}
+                  className="text-xs"
+                />
+              ) : (
+                "-"
+              )}
+            </TableCell>
+            <TableCell className="text-start w-[70px]">
+              {talent.technical ? (
+                <BadgeCustom
+                  title={talent.technical}
+                  color={
+                    talent.technical === "Very Good"
+                      ? "green"
+                      : talent.technical === "Good"
+                      ? "blue"
+                      : "amber"
+                  }
+                  condition={true}
+                  className="text-xs"
+                />
+              ) : (
+                "-"
+              )}
+            </TableCell>
+            <TableCell className="text-start w-[70px]">
+              <span className="truncate block">{talent.internal || "-"}</span>
+            </TableCell>
+            <TableCell className="text-start w-[40px]">
+              <div className="flex justify-center">
+                {talent.isHired ? (
+                  <CircleCheck className="w-4 h-4 text-green-600" />
+                ) : (
+                  <CircleMinus className="w-4 h-4 text-red-600" />
+                )}
+              </div>
+            </TableCell>
+            <TableCell className="text-start w-[80px]">
+              <BadgeCustom
+                title={talent.isVerifiedProfile ? "Verified" : "Unverified"}
+                color={talent.isVerifiedProfile ? "green" : "red"}
+                condition={true}
+                className="text-xs"
+              />
+            </TableCell>
+            <TableCell className="text-start w-[80px]">
+              <span className="truncate block text-xs">
+                {talent.createdDate
+                  .toLocaleDateString("en-US", {
+                    month: "2-digit",
+                    day: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                  })
+                  .replace(",", "")}
+              </span>
+            </TableCell>
+            <TableCell className="text-start w-[80px]">
+              <span className="truncate block text-xs">
+                {talent.updatedDate
+                  ? talent.updatedDate
+                      .toLocaleDateString("en-US", {
+                        month: "2-digit",
+                        day: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false,
+                      })
+                      .replace(",", "")
+                  : "-"}
+              </span>
+            </TableCell>
+            <TableCell className="text-start w-[80px]">
+              <span className="truncate block text-xs">{talent.status}</span>
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -194,191 +280,240 @@ const TalentNotFound = ({ clearSearch }: { clearSearch: () => void }) => {
   );
 };
 
-function TalentsContent() {
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [isClear, setIsClear] = useState(false);
-  const [controlledSearch, setControlledSearch] = useState<string>("");
+function TalentsContent({ searchValue }: { searchValue: string }) {
   const [controlledValues, setControlledValues] =
-    useState<Record<string, string>>(defaultFilters);
-  const [appliedSearch, setAppliedSearch] = useState<string>("");
+    useState<Record<string, string[]>>(defaultFilters);
   const [appliedValues, setAppliedValues] =
-    useState<Record<string, string>>(defaultFilters);
+    useState<Record<string, string[]>>(defaultFilters);
   const [hasSearched, setHasSearched] = useState<boolean>(false);
-  const [isClearing, setIsClearing] = useState<boolean>(false);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isVerticalFilterOpen, setIsVerticalFilterOpen] = useState(false);
 
-  
+  const getActiveFilterCount = () => {
+    let count = 0;
+    if (searchValue) count++;
+    Object.values(appliedValues).forEach((values) => {
+      if (values && values.length > 0) count++;
+    });
+    return count;
+  };
 
   return (
-    <div className="w-full flex-1 space-y- h-full">
-      <div className="flex justify-between items-center">
-        {!isFilterOpen && !hasSearched && (
-          <>
-            <SearchInput
-              placeholder="Search by Email/Name"
-              value={controlledSearch}
-              onChange={(input) => {
-                setControlledSearch(input);
-                setAppliedSearch(input)
+    <div className="w-full flex-1 h-full gap-4 flex overflow-hidden">
+      {isVerticalFilterOpen && (
+        <div className="w-80 flex-shrink-0 border-1 rounded-md border-gray-200 p-4">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-lg">Filter</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setControlledValues(defaultFilters);
+                  setAppliedValues(defaultFilters);
+                  setHasSearched(false);
+                }}
+                className="text-violet-600 hover:text-violet-700"
+              >
+                <CircleX className="w-4 h-4" />
+                Clear All
+              </Button>
+            </div>
+            <div className="space-y-4">
+              {filterFields.map((field) => (
+                <div key={field.key} className="space-y-2">
+                  <CollapsibleFilterField
+                    label={field.label}
+                    selectedValues={controlledValues?.[field.key] ?? []}
+                    options={
+                      Array.isArray(field.options)
+                        ? field.options.map(String)
+                        : []
+                    }
+                    onSelectionChange={(values: string[]) => {
+                      const newValues = {
+                        ...controlledValues,
+                        [field.key]: values,
+                      };
+                      setControlledValues(newValues);
+                    }}
+                    type={field.type}
+                    value={field.value}
+                    from={field.from}
+                    to={field.to}
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="flex flex-col gap-2 pt-4">
+              <Button
+                onClick={() => {
+                  setAppliedValues(controlledValues);
+                  setHasSearched(true);
+                  setIsVerticalFilterOpen(false);
+                }}
+                className="bg-violet-600 hover:bg-violet-700 text-white"
+              >
+                <SearchIcon className="w-4 h-4 mr-2" />
+                Apply Filters
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setIsVerticalFilterOpen(false)}
+                className="border-gray-200"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div
+        className={`flex-1 ${
+          isVerticalFilterOpen ? "max-w-[72rem]" : "w-full"
+        } border border-gray-200 rounded-lg bg-white min-w-0 overflow-hidden flex flex-col`}
+      >
+        <div className="flex justify-between items-center">
+          {hasSearched && (
+            <div className="flex items-center gap-2 w-full justify-end">
+              <Button
+                className="flex gap-2 items-center text-violet-700 border-none bg-transparent shadow-none"
+                variant={"outline"}
+                onClick={() => {
+                  setControlledValues(defaultFilters);
+                  setAppliedValues(defaultFilters);
+                  setHasSearched(false);
+                }}
+              >
+                <CircleX />
+                Clear Filter
+              </Button>
+              <Button
+                className="flex gap-2 items-center border-gray-300"
+                variant={"outline"}
+                onClick={() => {
+                  setControlledValues(appliedValues);
+                  setIsVerticalFilterOpen(true);
+                }}
+              >
+                <ListFilter size={16} />
+                Filter more
+              </Button>
+            </div>
+          )}
+        </div>
+        <div className="flex-1 overflow-hidden">
+          {handleFilterTalents({
+            search: searchValue,
+            filterValues: appliedValues,
+          })?.length > 0 ? (
+            <div className="h-full flex flex-col ">
+              <div className="items-center flex justify-between p-3 flex-shrink-0">
+                <div className="flex items-center gap-2">
+                  <div className="relative">
+                    <Button
+                      variant={"outline"}
+                      className={`${
+                        isVerticalFilterOpen ? "rotate-180 " : " "
+                      } border-gray-200`}
+                      onClick={() => setIsVerticalFilterOpen((v) => !v)}
+                    >
+                      {isVerticalFilterOpen ? (
+                        <PanelRight size={16} />
+                      ) : (
+                        <ListFilter size={16} />
+                      )}
+                    </Button>
+                    {getActiveFilterCount() > 0 && !isVerticalFilterOpen && (
+                      <BadgeCustom
+                        title={`${getActiveFilterCount()}`}
+                        color="indigo"
+                        condition={false}
+                        className="absolute -top-2 -right-2 bg-violet-500 text-white text-xs rounded-full px-2 bg-violet-100 border-1 border-violet-600 text-violet-700 flex items-center justify-center"
+                      />
+                    )}
+                  </div>
+                  <strong className="font-bold text-lg">Talent members</strong>
+                  <Badge
+                    variant={"outline"}
+                    className="border-violet-200 rounded-full py-0 bg-violet-100 text-violet-700"
+                  >
+                    {
+                      handleFilterTalents({
+                        search: searchValue,
+                        filterValues: appliedValues,
+                      })?.length
+                    }{" "}
+                    user
+                    {handleFilterTalents({
+                      search: searchValue,
+                      filterValues: appliedValues,
+                    })?.length > 1 && "s"}
+                  </Badge>
+                </div>
+                <div className="items-center flex gap-2">
+                  <Button
+                    className=" gap-2 flex items-center border-gray-200"
+                    variant={"outline"}
+                  >
+                    <FileDown />
+                    Export
+                  </Button>
+                  <Button className="bg-violet-600 gap-2 flex items-center text-white">
+                    <SquarePlus />
+                    Add Talent
+                  </Button>
+                </div>
+              </div>
+              <div className="flex-1 overflow-x-auto">
+                <TalentsTable
+                  search={searchValue}
+                  filterValues={appliedValues}
+                />
+              </div>
+            </div>
+          ) : (
+            <TalentNotFound
+              clearSearch={() => {
+                // Search is now controlled by App.tsx, so we don't need to clear it here
               }}
             />
-            <Button
-              className="flex gap-2 items-center border-gray-300 transition-all duration-500 ease-in-out"
-              variant={"outline"}
-              onClick={() => {
-                setIsFilterOpen(true);
-              }}
-            >
-              <ListFilter size={16} />
-              Filters
-            </Button>
-          </>
-        )}
-        {!isFilterOpen && hasSearched && (
-          <div className="flex items-center gap-2 w-full justify-end">
-            <Button
-              className="flex gap-2 items-center text-violet-700 border-none bg-transparent shadow-none"
-              variant={"outline"}
-              onClick={() => {
-                setIsClearing(true);
-                setControlledValues(defaultFilters);
-                setControlledSearch("");
-                setAppliedSearch("");
-                setIsFilterOpen(true);
-                setIsClear(true);
-              }}
-            >
-              <CircleX />
-              Clear Filter
-            </Button>
-            <Button
-              className="flex gap-2 items-center border-gray-300"
-              variant={"outline"}
-              onClick={() => {
-                setControlledValues(appliedValues);
-                setControlledSearch(appliedSearch);
-                setIsFilterOpen(true);
-              }}
-            >
-              <ListFilter size={16} />
-              Filter more
-            </Button>
-          </div>
-        )}
+          )}
+
+          {handleFilterTalents({
+            search: searchValue,
+            filterValues: appliedValues,
+          })?.length > 0 && (
+            <div className="w-full mt-4 flex justify-center ">
+              <Pagination>
+                <PaginationContent className=" w-full justify-between flex">
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      className="border-1 border-gray-200"
+                    ></PaginationPrevious>
+                  </PaginationItem>
+                  <div className="flex items-center justify-center">
+                    <PaginationItem>
+                      <PaginationLink href="#">1</PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  </div>
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      className="border-1 border-gray-200"
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
+        </div>
       </div>
-
-      <FilterSection
-        isClear={isClear}
-        isOpen={isFilterOpen}
-        onClose={() => {
-          setIsFilterOpen(false);
-          if (isClearing) {
-            setAppliedValues(defaultFilters);
-            setAppliedSearch("");
-            setHasSearched(false);
-            setIsClearing(false);
-          }
-          if (isClear) setIsClear(false);
-        }}
-        values={controlledValues}
-        onValuesChange={setControlledValues}
-        searchValue={controlledSearch}
-        onSearch={({ search, values }) => {
-          setAppliedSearch(search);
-          setAppliedValues(values);
-          setHasSearched(true);
-          setIsClearing(false);
-          setIsFilterOpen(false);
-          if (isClear) setIsClear(false);
-        }}
-      />
-
-      {handleFilterTalents({
-        search: appliedSearch,
-        filterValues: appliedValues,
-      })?.length > 0 ? (
-        <div className="w-full  overflow-hidden border border-gray-200 rounded-lg">
-          <div className="items-center flex justify-between p-3">
-            <div className="flex items-center gap-2">
-              <SidebarTrigger
-                className={`${isExpanded ? "rotate-180" : ""}`}
-                onClick={() => setIsExpanded((v) => !v)}
-              />
-              <strong className="font-bold text-lg">Talent members</strong>
-              <Badge
-                variant={"outline"}
-                className="border-violet-200 rounded-full py-0 bg-violet-100 text-violet-700"
-              >
-                {
-                  handleFilterTalents({
-                    search: appliedSearch,
-                    filterValues: appliedValues,
-                  })?.length
-                }{" "}
-                user
-                {handleFilterTalents({
-                  search: appliedSearch,
-                  filterValues: appliedValues,
-                })?.length > 1 && "s"}
-              </Badge>
-            </div>
-            <div className="items-center flex gap-2">
-              <Button
-                className=" gap-2 flex items-center border-gray-200"
-                variant={"outline"}
-              >
-                <FileDown />
-                Export
-              </Button>
-              <Button className="bg-violet-600 gap-2 flex items-center text-white">
-                <SquarePlus />
-                Add Talent
-              </Button>
-            </div>
-          </div>
-          <TalentsTable
-            isExpanded={isExpanded}
-            search={appliedSearch}
-            filterValues={appliedValues}
-          />
-        </div>
-      ) : (
-        <TalentNotFound
-          clearSearch={() => {
-            setControlledSearch("");
-            setAppliedSearch("");
-          }}
-        />
-      )}
-
-      {handleFilterTalents({
-        search: appliedSearch,
-        filterValues: appliedValues,
-      })?.length > 0 && (
-        <div className="w-full mt-4 flex justify-center ">
-          <Pagination>
-            <PaginationContent className=" w-full justify-between flex">
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  className="border-1 border-gray-200"
-                ></PaginationPrevious>
-              </PaginationItem>
-              <div className="flex items-center justify-center">
-                <PaginationItem>
-                  <PaginationLink href="#">1</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationEllipsis />
-                </PaginationItem>
-              </div>
-              <PaginationItem>
-                <PaginationNext href="#" className="border-1 border-gray-200" />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
-      )}
     </div>
   );
 }
@@ -391,12 +526,12 @@ function TasksContent() {
   return <></>;
 }
 
-export function TalentsPage() {
+export function TalentsPage({ searchValue }: { searchValue: string }) {
   const tabItems = [
     {
       id: "talents",
       label: "Talents",
-      content: <TalentsContent />,
+      content: <TalentsContent searchValue={searchValue} />,
     },
     {
       id: "skills",
@@ -412,8 +547,8 @@ export function TalentsPage() {
 
   return (
     <div className="w-full h-full flex-1 space-y-12">
-      <div className="space-y-4 h-full">
-        <TabCustom items={tabItems} />
+      <div className="space-y-4 h-full max-w-screen-2xl ">
+        <TalentsContent searchValue={searchValue} />
       </div>
     </div>
   );

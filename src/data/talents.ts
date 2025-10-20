@@ -8,24 +8,23 @@ export interface Talent {
   nationality: string;
   phoneNumber: string;
   type: string;
-  totalExps: number;
+  position: string;
   talentLevel: number;
-  skills: 'Java/SQL' | 'React/Typescript';
-  isCvUploaded: boolean;
-  backgroundInterview: {
-    score: string;
-    cappedScore: string;
-  };
-  technicalInterview: {
-    score: string;
-    cappedScore: string;
-  };
-  status: "Available" | "Unavailable";
+  skills: string[] | null;
+  yoe: number | null;
+  availability: "Available" | "Unavailable";
+  profileFeedback: "Very Good" | "Good" | "Not Sure" | null;
+  partner: string | null;
+  background: "Very Good" | "Good" | "Not Sure" | null;
+  technical: "Very Good" | "Good" | "Not Sure" | null;
+  internal: string | null;
   isHired: boolean;
-  profile: "Basic Info completed" | "Converted";
+  isVerifiedProfile: boolean;
   createdDate: Date;
-  updatedDate: Date;
-  source: "Basic Info completed" | "Converted";
+  updatedDate: Date | null;
+  status: "Pending" | "Active" | "Deactivate";
+  language: string[] | null;
+  totalExps: number;
 }
 
 export const talents: Talent[] = [
@@ -39,24 +38,23 @@ export const talents: Talent[] = [
     nationality: "Vietnam",
     phoneNumber: "+84 707 171 164",
     type: "ODC",
-    totalExps: 1,
+    position: "Backend Engineer",
     talentLevel: 3,
-    skills: "Java/SQL",
-    isCvUploaded: true,
-    backgroundInterview: {
-      score: "4.0",
-      cappedScore: "5.0",
-    },
-    technicalInterview: {
-      score: "4.0",
-      cappedScore: "5.0",
-    },
-    status: "Available",
+    skills: ["Java", "SQL", "Spring Boot", "Docker"],
+    yoe: 3,
+    availability: "Available",
+    profileFeedback: "Very Good",
+    partner: "Partner New",
+    background: "Good",
+    technical: "Very Good",
+    internal: "LinkedIn",
     isHired: false,
-    profile: "Converted",
-    createdDate: new Date(),
-    updatedDate: new Date(),
-    source: "Basic Info completed",
+    isVerifiedProfile: true,
+    createdDate: new Date("2025-01-14T10:51:00"),
+    updatedDate: new Date("2025-01-14T10:51:00"),
+    status: "Active",
+    language: ["Vietnamese", "English"],
+    totalExps: 3,
   },
   {
     name: {
@@ -68,23 +66,22 @@ export const talents: Talent[] = [
     nationality: "Vietnam",
     phoneNumber: "+84 707 171 164",
     type: "IND",
-    totalExps: 1,
+    position: "Frontend Engineer",
     talentLevel: 1,
-    skills: "React/Typescript",
-    isCvUploaded: false,
-    backgroundInterview: {
-      score: "4.0",
-      cappedScore: "5.0",
-    },
-    technicalInterview: {
-      score: "4.0",
-      cappedScore: "5.0",
-    },
-    status: "Unavailable",
+    skills: ["React", "TypeScript", "Next.js"],
+    yoe: 1,
+    availability: "Unavailable",
+    profileFeedback: "Good",
+    partner: null,
+    background: "Not Sure",
+    technical: "Good",
+    internal: "Internal",
     isHired: true,
-    profile: "Basic Info completed",
-    createdDate: new Date(),
-    updatedDate: new Date(),
-    source: "Converted",
+    isVerifiedProfile: false,
+    createdDate: new Date("2025-01-10T09:30:00"),
+    updatedDate: null,
+    status: "Pending",
+    language: ["Vietnamese"],
+    totalExps: 1,
   },
 ];

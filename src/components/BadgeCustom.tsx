@@ -8,6 +8,7 @@ type BadgeColor =
   | "amber"
   | "indigo"
   | "sky"
+  | "gray"
 
 type BadgeCustomProps = {
   title: string
@@ -24,6 +25,7 @@ const COLOR_STYLES: Record<BadgeColor, { bg: string; border: string; text: strin
   amber: { bg: "bg-amber-100", border: "border-amber-300", text: "text-amber-800" },
   indigo: { bg: "bg-indigo-100", border: "border-indigo-300", text: "text-indigo-800" },
   sky: { bg: "bg-sky-100", border: "border-sky-300", text: "text-sky-800" },
+  gray: { bg: "bg-gray-100", border: "border-gray-300", text: "text-gray-800" },
 }
 
 const GRAY_STYLE = { bg: "bg-gray-100", border: "border-gray-300", text: "text-gray-800" }

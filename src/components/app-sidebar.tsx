@@ -140,7 +140,8 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup className="gap-2 p-4">
-          <SidebarGroupLabel className="text-red-500 text-xl font-bold">
+          <SidebarGroupLabel className="text-xl font-bold">
+            <img src="src/assets/favicon-96x96.png" className="w-8 h-8" />
             TALENTX
           </SidebarGroupLabel>
           <SearchInput />
