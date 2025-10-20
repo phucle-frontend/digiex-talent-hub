@@ -1,4 +1,3 @@
-import { TabCustom } from "../components/TabCustom";
 import {
   CircleX,
   Copy,
@@ -37,7 +36,7 @@ import ButtonIcon from "@/components/ButtonIcon";
 import BadgeCustom from "@/components/BadgeCustom";
 import { handleFilterTalents } from "@/lib/common";
 
-const SkillsDisplay = ({ skills }: { skills: string[] | null }) => {
+const SkillsDisplay = ({ skills }: { skills: { name: string; yoe: number; competency: string }[] | null }) => {
   if (!skills || skills.length === 0) return <span>-</span>;
 
   const displaySkills = skills.slice(0, 2);
@@ -48,7 +47,7 @@ const SkillsDisplay = ({ skills }: { skills: string[] | null }) => {
       {displaySkills.map((skill, index) => (
         <BadgeCustom
           key={index}
-          title={skill}
+          title={`${skill.name}`}
           color="green"
           condition={true}
           className="text-xs"
@@ -335,6 +334,8 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
                         [field.key]: values,
                       };
                       setControlledValues(newValues);
+                      setAppliedValues(newValues);
+                      setHasSearched(true);
                     }}
                     type={field.type}
                     value={field.value}
@@ -346,17 +347,6 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
             </div>
 
             <div className="flex flex-col gap-2 pt-4">
-              <Button
-                onClick={() => {
-                  setAppliedValues(controlledValues);
-                  setHasSearched(true);
-                  setIsVerticalFilterOpen(false);
-                }}
-                className="bg-violet-600 hover:bg-violet-700 text-white"
-              >
-                <SearchIcon className="w-4 h-4 mr-2" />
-                Apply Filters
-              </Button>
               <Button
                 variant="outline"
                 onClick={() => setIsVerticalFilterOpen(false)}
@@ -476,7 +466,9 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
           ) : (
             <TalentNotFound
               clearSearch={() => {
-                // Search is now controlled by App.tsx, so we don't need to clear it here
+                  setControlledValues(defaultFilters);
+                  setAppliedValues(defaultFilters);
+                  setHasSearched(false);
               }}
             />
           )}
@@ -518,32 +510,7 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
   );
 }
 
-function SkillsContent() {
-  return <></>;
-}
-
-function TasksContent() {
-  return <></>;
-}
-
 export function TalentsPage({ searchValue }: { searchValue: string }) {
-  const tabItems = [
-    {
-      id: "talents",
-      label: "Talents",
-      content: <TalentsContent searchValue={searchValue} />,
-    },
-    {
-      id: "skills",
-      label: "Skills Configuration",
-      content: <SkillsContent />,
-    },
-    {
-      id: "tasks",
-      label: "Tasks",
-      content: <TasksContent />,
-    },
-  ];
 
   return (
     <div className="w-full h-full flex-1 space-y-12">

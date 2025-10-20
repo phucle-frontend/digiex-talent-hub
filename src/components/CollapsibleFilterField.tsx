@@ -10,6 +10,8 @@ import { Calendar } from './ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 import { Button } from './ui/button'
 import { format } from 'date-fns'
+import { SkillsDialog } from './SkillsDialog'
+import BadgeCustom from './BadgeCustom'
 
 interface CollapsibleFilterFieldProps {
   label: string
@@ -96,34 +98,25 @@ export function CollapsibleFilterField({
       case 'skills':
         return (
           <>
-            <div className="relative">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <Input
-                placeholder="Search skills"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8 text-sm border-gray-200"
+            <div className="space-y-2 flex flex-col justify-start">
+              <SkillsDialog 
+                selectedSkills={selectedValues}
+                onSkillsChange={onSelectionChange}
               />
-            </div>
-            
-            <div className="max-h-48 overflow-y-auto space-y-1">
-              {filteredOptions.map((option) => (
-                <div key={option} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded">
-                  <Checkbox
-                    id={`${label}-${option}`}
-                    checked={selectedValues.includes(option)}
-                    onCheckedChange={(checked) => 
-                      handleCheckboxChange(option, checked as boolean)
-                    }
-                  />
-                  <label 
-                    htmlFor={`${label}-${option}`}
-                    className="flex items-center gap-2 text-sm cursor-pointer flex-1"
-                  >
-                    {option}
-                  </label>
+              
+              {selectedValues.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {selectedValues.map((skill, index) => (
+                    <BadgeCustom
+                      key={index}
+                      title={skill}
+                      color="green"
+                      condition={true}
+                      className="text-xs"
+                    />
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           </>
         )
@@ -321,8 +314,8 @@ export function CollapsibleFilterField({
             {renderContent()}
             
             {filteredOptions.length > 6 && type !== 'range' && type !== 'date_picker' && (
-              <div className="text-center">
-                <button className="text-violet-600 text-sm hover:text-violet-700">
+              <div className="text-start">
+                <button className="text-violet-700 text-sm hover:text-violet-800">
                   More...
                 </button>
               </div>

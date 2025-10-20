@@ -1,3 +1,9 @@
+export interface TalentSkill {
+  name: string;
+  yoe: number; // years of experience
+  competency: 'BEGINNER' | 'EXPERIENCED' | 'ADVANCED' | 'EXPERT';
+}
+
 export interface Talent {
   name: {
     id: number;
@@ -10,7 +16,7 @@ export interface Talent {
   type: string;
   position: string;
   talentLevel: number;
-  skills: string[] | null;
+  skills: TalentSkill[] | null;
   yoe: number | null;
   availability: "Available" | "Unavailable";
   profileFeedback: "Very Good" | "Good" | "Not Sure" | null;
@@ -18,6 +24,7 @@ export interface Talent {
   background: "Very Good" | "Good" | "Not Sure" | null;
   technical: "Very Good" | "Good" | "Not Sure" | null;
   internal: string | null;
+  profileStatus: "Manual" | "Converted" | "Email Verified" | "Basic Info Completed" | "Profile Completed" | null;
   isHired: boolean;
   isVerifiedProfile: boolean;
   createdDate: Date;
@@ -40,12 +47,18 @@ export const talents: Talent[] = [
     type: "ODC",
     position: "Backend Engineer",
     talentLevel: 3,
-    skills: ["Java", "SQL", "Spring Boot", "Docker"],
+    skills: [
+      { name: "Java", yoe: 3, competency: "ADVANCED" },
+      { name: "SQL", yoe: 3, competency: "EXPERIENCED" },
+      { name: "Spring Boot", yoe: 2, competency: "EXPERIENCED" },
+      { name: "Docker", yoe: 2, competency: "EXPERIENCED" }
+    ],
     yoe: 3,
     availability: "Available",
     profileFeedback: "Very Good",
     partner: "Partner New",
     background: "Good",
+    profileStatus: 'Basic Info Completed',
     technical: "Very Good",
     internal: "LinkedIn",
     isHired: false,
@@ -68,12 +81,17 @@ export const talents: Talent[] = [
     type: "IND",
     position: "Frontend Engineer",
     talentLevel: 1,
-    skills: ["React", "TypeScript", "Next.js"],
+    skills: [
+      { name: "React", yoe: 1, competency: "BEGINNER" },
+      { name: "TypeScript", yoe: 1, competency: "BEGINNER" },
+      { name: "Next.js", yoe: 1, competency: "BEGINNER" }
+    ],
     yoe: 1,
     availability: "Unavailable",
     profileFeedback: "Good",
-    partner: null,
+    partner: 'Aloha',
     background: "Not Sure",
+    profileStatus: 'Converted',
     technical: "Good",
     internal: "Internal",
     isHired: true,
@@ -81,7 +99,7 @@ export const talents: Talent[] = [
     createdDate: new Date("2025-01-10T09:30:00"),
     updatedDate: null,
     status: "Pending",
-    language: ["Vietnamese"],
+    language: ["Vietnamese", 'French'],
     totalExps: 1,
   },
 ];

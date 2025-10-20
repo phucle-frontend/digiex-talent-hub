@@ -16,7 +16,7 @@ export const handleFilterTalents = ({
         t.name.email.toLowerCase().includes(q) ||
         t.phoneNumber.toLowerCase().includes(q) ||
         t.nationality.toLowerCase().includes(q) ||
-        (t.skills && t.skills.some(skill => skill.toLowerCase().includes(q)))
+        (t.skills && t.skills.some(skill => skill.name.toLowerCase().includes(q)))
       );
     })
     .filter((t) => {
@@ -25,11 +25,20 @@ export const handleFilterTalents = ({
       // Skills filter
       if (f.skills && f.skills.length > 0) {
         const talentSkills = t.skills || [];
-        const hasMatchingSkill = f.skills.some(skill => 
-          talentSkills.some(talentSkill => 
-            talentSkill.toLowerCase().includes(skill.toLowerCase())
-          )
-        );
+        // allow filters of format: "Name | YOE | COMPETENCY" or just name
+        const hasMatchingSkill = f.skills.some(filterSkill => {
+          const parts = filterSkill.split('|').map(p => p.trim());
+          const filterName = parts[0]?.toLowerCase();
+          const filterYoe = parts[1] ? Number(parts[1]) : undefined;
+          const filterCompetency = parts[2]?.toLowerCase();
+
+          return talentSkills.some(s => {
+            const nameOk = filterName ? s.name.toLowerCase() === filterName : true;
+            const yoeOk = typeof filterYoe === 'number' && !Number.isNaN(filterYoe) ? s.yoe === filterYoe : true;
+            const compOk = filterCompetency ? s.competency.toLowerCase() === filterCompetency : true;
+            return nameOk && yoeOk && compOk;
+          })
+        });
         if (!hasMatchingSkill) return false;
       }
       
@@ -42,8 +51,11 @@ export const handleFilterTalents = ({
       if (f.totalExps && f.totalExps.length > 0) {
         const years = t.totalExps;
         const matchesRange = f.totalExps.some(range => {
-          const rangeNum = parseInt(range);
-          return years >= rangeNum && years < rangeNum + 1;
+          if (range.includes('-')) {
+            const [from, to] = range.split('-').map(Number);
+            return years >= from && years <= to;
+          }
+          return false;
         });
         if (!matchesRange) return false;
       }
@@ -82,6 +94,22 @@ export const handleFilterTalents = ({
       // Talent Status filter
       if (f.talentStatus && f.talentStatus.length > 0) {
         if (!f.talentStatus.includes(t.status)) return false;
+      }
+      
+      // Profile Status filter
+      if (f.profileStatus && f.profileStatus.length > 0) {
+        // Map talent data to profile status for filtering
+        let talentProfileStatus = 'Manual'; // Default status
+        if (t.isVerifiedProfile) {
+          talentProfileStatus = 'Email Verified';
+        }
+        if (t.profileFeedback === 'Very Good') {
+          talentProfileStatus = 'Profile Completed';
+        } else if (t.profileFeedback === 'Good') {
+          talentProfileStatus = 'Basic Info Completed';
+        }
+        
+        if (!f.profileStatus.includes(talentProfileStatus)) return false;
       }
       
       // Internal filter
