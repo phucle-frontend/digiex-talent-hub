@@ -50,7 +50,6 @@ export function SkillsDialog({ selectedSkills, onSkillsChange }: SkillsDialogPro
   const handleRowChange = (id: string, field: keyof SkillRow, value: string | number) => {
     setSkillRows(prev => {
       const updated = prev.map(row => (row.id === id ? { ...row, [field]: value } : row))
-      // Auto-add an empty row if user selected a skill name and there is no empty row left
       if (field === 'name' && typeof value === 'string' && value) {
         const hasEmpty = updated.some(r => !r.name)
         if (!hasEmpty) {

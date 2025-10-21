@@ -35,8 +35,20 @@ import { Badge } from "@/components/ui/badge";
 import ButtonIcon from "@/components/ButtonIcon";
 import BadgeCustom from "@/components/BadgeCustom";
 import { handleFilterTalents } from "@/lib/common";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { TalentStatus } from "@/data/talents";
 
-const SkillsDisplay = ({ skills }: { skills: { name: string; yoe: number; competency: string }[] | null }) => {
+const SkillsDisplay = ({
+  skills,
+}: {
+  skills: { name: string; yoe: number; competency: string }[] | null;
+}) => {
   if (!skills || skills.length === 0) return <span>-</span>;
 
   const displaySkills = skills.slice(0, 2);
@@ -246,7 +258,18 @@ const TalentsTable = ({
               </span>
             </TableCell>
             <TableCell className="text-start w-[80px]">
-              <span className="truncate block text-xs">{talent.status}</span>
+              <Select value={talent.status} onValueChange={(v) => {}}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(TalentStatus).map(([key, value]) => (
+                    <SelectItem key={key} value={value}>
+                      {key}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </TableCell>
           </TableRow>
         ))}
@@ -297,7 +320,7 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
   };
 
   return (
-    <div className="w-full flex-1 h-full gap-4 flex overflow-hidden">
+    <div className="w-full flex-1 gap-4 flex overflow-hidden">
       {isVerticalFilterOpen && (
         <div className="w-80 flex-shrink-0 border-1 rounded-md border-gray-200 p-4">
           <div className="space-y-4">
@@ -466,9 +489,9 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
           ) : (
             <TalentNotFound
               clearSearch={() => {
-                  setControlledValues(defaultFilters);
-                  setAppliedValues(defaultFilters);
-                  setHasSearched(false);
+                setControlledValues(defaultFilters);
+                setAppliedValues(defaultFilters);
+                setHasSearched(false);
               }}
             />
           )}
@@ -511,7 +534,6 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
 }
 
 export function TalentsPage({ searchValue }: { searchValue: string }) {
-
   return (
     <div className="w-full h-full flex-1 space-y-12">
       <div className="space-y-4 h-full max-w-screen-2xl ">

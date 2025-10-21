@@ -134,18 +134,6 @@ export function CollapsibleFilterField({
               />
             </div>
             
-            {/* <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Select all</span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleSelectAll}
-                className="text-xs"
-              >
-                {selectedValues.length === options.length ? 'Deselect All' : 'Select All'}
-              </Button>
-            </div> */}
-            
             <div className="max-h-48 overflow-y-auto space-y-1">
               {filteredOptions.map((option) => (
                 <div key={option} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded">

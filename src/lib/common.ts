@@ -22,10 +22,8 @@ export const handleFilterTalents = ({
     .filter((t) => {
       const f = filterValues;
       
-      // Skills filter
       if (f.skills && f.skills.length > 0) {
         const talentSkills = t.skills || [];
-        // allow filters of format: "Name | YOE | COMPETENCY" or just name
         const hasMatchingSkill = f.skills.some(filterSkill => {
           const parts = filterSkill.split('|').map(p => p.trim());
           const filterName = parts[0]?.toLowerCase();
@@ -42,12 +40,10 @@ export const handleFilterTalents = ({
         if (!hasMatchingSkill) return false;
       }
       
-      // Position filter
       if (f.position && f.position.length > 0) {
         if (!f.position.includes(t.position)) return false;
       }
       
-      // Total Experience filter
       if (f.totalExps && f.totalExps.length > 0) {
         const years = t.totalExps;
         const matchesRange = f.totalExps.some(range => {
@@ -60,29 +56,24 @@ export const handleFilterTalents = ({
         if (!matchesRange) return false;
       }
       
-      // Talent Level filter
       if (f.talentLevel && f.talentLevel.length > 0) {
         if (!f.talentLevel.includes(t.talentLevel.toString())) return false;
       }
       
-      // Partners filter
       if (f.partners && f.partners.length > 0) {
         if (!f.partners.includes(t.partner || "")) return false;
       }
       
-      // Availability filter
       if (f.availability && f.availability.length > 0) {
         if (!f.availability.includes(t.availability)) return false;
       }
       
-      // Verified Profile filter
       if (f.verifiedProfile && f.verifiedProfile.length > 0) {
         const isVerified = f.verifiedProfile.includes("Verified");
         if (isVerified && !t.isVerifiedProfile) return false;
         if (!isVerified && t.isVerifiedProfile) return false;
       }
       
-      // Language filter
       if (f.language && f.language.length > 0) {
         const talentLanguages = t.language || [];
         const hasMatchingLanguage = f.language.some(lang => 
@@ -91,15 +82,12 @@ export const handleFilterTalents = ({
         if (!hasMatchingLanguage) return false;
       }
       
-      // Talent Status filter
       if (f.talentStatus && f.talentStatus.length > 0) {
         if (!f.talentStatus.includes(t.status)) return false;
       }
       
-      // Profile Status filter
       if (f.profileStatus && f.profileStatus.length > 0) {
-        // Map talent data to profile status for filtering
-        let talentProfileStatus = 'Manual'; // Default status
+        let talentProfileStatus = 'Manual';
         if (t.isVerifiedProfile) {
           talentProfileStatus = 'Email Verified';
         }
@@ -112,12 +100,10 @@ export const handleFilterTalents = ({
         if (!f.profileStatus.includes(talentProfileStatus)) return false;
       }
       
-      // Internal filter
       if (f.internal && f.internal.length > 0) {
         if (!f.internal.includes(t.internal || "")) return false;
       }
       
-      // Created Date filter
       if (f.createdDate && f.createdDate.length > 0) {
         const dateRange = f.createdDate[0];
         if (dateRange && dateRange.includes('-')) {

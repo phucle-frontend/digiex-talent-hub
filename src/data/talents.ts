@@ -1,6 +1,6 @@
 export interface TalentSkill {
   name: string;
-  yoe: number; // years of experience
+  yoe: number; 
   competency: 'BEGINNER' | 'EXPERIENCED' | 'ADVANCED' | 'EXPERT';
 }
 
@@ -29,10 +29,20 @@ export interface Talent {
   isVerifiedProfile: boolean;
   createdDate: Date;
   updatedDate: Date | null;
-  status: "Pending" | "Active" | "Deactivate";
+  status: TalentStatus;
   language: string[] | null;
   totalExps: number;
 }
+
+export const TalentStatus = {
+  PENDING: 'PENDING',
+  ACTIVATE: 'ACTIVATE',
+  DEACTIVATE: 'DEACTIVATE',
+} as const;
+
+export type TalentStatus = typeof TalentStatus[keyof typeof TalentStatus];
+
+
 
 export const talents: Talent[] = [
   {
@@ -65,7 +75,7 @@ export const talents: Talent[] = [
     isVerifiedProfile: true,
     createdDate: new Date("2025-01-14T10:51:00"),
     updatedDate: new Date("2025-01-14T10:51:00"),
-    status: "Active",
+    status: TalentStatus.ACTIVATE,
     language: ["Vietnamese", "English"],
     totalExps: 3,
   },
@@ -98,7 +108,7 @@ export const talents: Talent[] = [
     isVerifiedProfile: false,
     createdDate: new Date("2025-01-10T09:30:00"),
     updatedDate: null,
-    status: "Pending",
+    status: TalentStatus.PENDING,
     language: ["Vietnamese", 'French'],
     totalExps: 1,
   },

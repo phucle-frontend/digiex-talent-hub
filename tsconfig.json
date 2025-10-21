@@ -8,7 +8,9 @@
       "path": "./tsconfig.node.json"
     }
   ],
+  
   "compilerOptions": {
+    "erasableSyntaxOnly": false,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
