@@ -1,150 +1,183 @@
-import { useState } from 'react'
-import { Search, CalendarIcon } from 'lucide-react'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion'
-import { Input } from './ui/input'
-import { Checkbox } from './ui/checkbox'
-import { RadioGroup, RadioGroupItem } from './ui/radio-group'
-import { Label } from './ui/label'
-import { Slider } from './ui/slider'
-import { Calendar } from './ui/calendar'
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
-import { Button } from './ui/button'
-import { format } from 'date-fns'
-import { SkillsDialog } from './SkillsDialog'
-import BadgeCustom from './BadgeCustom'
+import { useState } from "react";
+import { Search } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./ui/accordion";
+import { Input } from "./ui/input";
+import { Checkbox } from "./ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { Label } from "./ui/label";
+import { Button } from "./ui/button";
+import { format } from "date-fns";
+import { SkillsDialog } from "./SkillsDialog";
+import BadgeCustom from "./BadgeCustom";
+import { FILTER_FIELDS_KEY } from "@/config/filterConfig";
+import { DayPicker } from "react-day-picker";
+import Slider from "@mui/material/Slider";
+import type { DateRange } from "react-day-picker";
+
 
 interface CollapsibleFilterFieldProps {
-  label: string
-  selectedValues: string[]
-  options: string[]
-  onSelectionChange: (values: string[]) => void
-  className?: string
-  type?: string
-  value?: any
-  from?: any
-  to?: any
+  label: string;
+  selectedValues: string[];
+  options: string[];
+  onSelectionChange: (values: string[]) => void;
+  className?: string;
+  type?: string;
+  fieldKey: FILTER_FIELDS_KEY;
+  from?: any;
+  to?: any;
 }
 
-export function CollapsibleFilterField({ 
-  label, 
-  selectedValues, 
-  options, 
-  onSelectionChange, 
+export function CollapsibleFilterField({
+  label,
+  selectedValues,
+  options,
+  onSelectionChange,
   className = "",
   type = "checkboxes",
-  value,
+  fieldKey,
   from,
-  to
+  to,
 }: CollapsibleFilterFieldProps) {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [dateFrom, setDateFrom] = useState<Date | undefined>(from ? new Date(from) : undefined)
-  const [dateTo, setDateTo] = useState<Date | undefined>(to ? new Date(to) : undefined)
-  const [rangeValue, setRangeValue] = useState([0, 14])
+  const [searchTerm, setSearchTerm] = useState("");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(
+    from && to
+      ? {
+          from: new Date(from),
+          to: new Date(to),
+        }
+      : undefined
+  );
+  const [value, setValue] = useState<number[]>([0, 14]);
 
-  // Add "All" option for checkboxes
-  const allOptions = type === "checkboxes" ? ["All", ...options] : options
-  const filteredOptions = allOptions.filter(option =>
+  function valuetext(v: number) {
+    return `${v}`;
+  }
+
+  const allOptions = type === "checkboxes" ? ["All", ...options] : options;
+  const filteredOptions = allOptions.filter((option) =>
     option.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  );
 
   const handleCheckboxChange = (value: string, checked: boolean) => {
     if (value === "All") {
       if (checked) {
-        onSelectionChange(["All", ...options.filter(opt => opt !== "All")])
+        onSelectionChange(["All", ...options.filter((opt) => opt !== "All")]);
       } else {
-        onSelectionChange([])
+        onSelectionChange([]);
       }
     } else {
       if (checked) {
-        const newValues = [...selectedValues.filter(v => v !== "All"), value]
-        onSelectionChange(newValues)
+        const newValues = [...selectedValues.filter((v) => v !== "All"), value];
+        onSelectionChange(newValues);
       } else {
-        onSelectionChange(selectedValues.filter(v => v !== value))
+        onSelectionChange(selectedValues.filter((v) => v !== value));
       }
     }
-  }
+  };
 
   const handleRadioChange = (value: string) => {
-    onSelectionChange([value])
-  }
+    onSelectionChange([value]);
+  };
 
-  const handleSelectAll = () => {
-    if (selectedValues.length === options.length) {
-      onSelectionChange([])
+  const handleChange = (_event: Event, newValue: number[]) => {
+    setValue(newValue);
+    onSelectionChange([`${newValue[0]}-${newValue[1]}`]);
+  };
+
+  const handleDateRangeChange = (newDateRange: DateRange | undefined) => {
+    console.log("Date range changed:", newDateRange);
+    setDateRange(newDateRange);
+
+    if (newDateRange?.from && newDateRange?.to) {
+      const fromStr = format(newDateRange.from, "yyyy-MM-dd");
+      const toStr = format(newDateRange.to, "yyyy-MM-dd");
+      console.log("Sending date range:", `${fromStr}-${toStr}`);
+      onSelectionChange([`${fromStr}-${toStr}`]);
     } else {
-      onSelectionChange([...options])
+      console.log("Clearing date range");
+      onSelectionChange([]);
     }
-  }
-
-  const handleRangeChange = (values: number[]) => {
-    setRangeValue(values)
-    onSelectionChange([`${values[0]}-${values[1]}`])
-  }
-
-  const handleDateChange = (date: Date | undefined, isFrom: boolean) => {
-    if (isFrom) {
-      setDateFrom(date)
-    } else {
-      setDateTo(date)
-    }
-    // Update selection with date range
-    const fromStr = dateFrom ? format(dateFrom, 'yyyy-MM-dd') : ''
-    const toStr = dateTo ? format(dateTo, 'yyyy-MM-dd') : ''
-    onSelectionChange([`${fromStr}-${toStr}`])
-  }
+  };
 
   const renderContent = () => {
+    const shouldRenderSearchInput = [
+      FILTER_FIELDS_KEY.PARTNERS,
+      FILTER_FIELDS_KEY.POSITION,
+    ]?.includes(fieldKey as any);
     switch (type) {
-      case 'skills':
+      case "skills":
         return (
           <>
             <div className="space-y-2 flex flex-col justify-start">
-              <SkillsDialog 
-                selectedSkills={selectedValues}
-                onSkillsChange={onSelectionChange}
-              />
-              
               {selectedValues.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {selectedValues.map((skill, index) => (
                     <BadgeCustom
                       key={index}
-                      title={skill}
+                      title={
+                        skill.length > 30 ? skill.slice(0, 30) + "..." : skill
+                      }
                       color="green"
                       condition={true}
-                      className="text-xs"
+                      className="text-sm"
                     />
                   ))}
                 </div>
               )}
+              <SkillsDialog
+                selectedSkills={selectedValues}
+                onSkillsChange={onSelectionChange}
+              />
             </div>
           </>
-        )
+        );
 
-      case 'checkboxes':
+      case "checkboxes":
         return (
           <>
             <div className="relative">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <Input
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8 text-sm border-gray-200"
-              />
+              {shouldRenderSearchInput && (
+                <>
+                  <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Input
+                    placeholder="Search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-8 text-sm border-gray-200"
+                  />
+                </>
+              )}
             </div>
-            
+            <div className="flex flex-wrap gap-1">
+              {selectedValues?.map((item) => (
+                <BadgeCustom
+                  color="green"
+                  className="py-1 self-start"
+                  title={item}
+                  condition={true}
+                />
+              ))}
+            </div>
+
             <div className="max-h-48 overflow-y-auto space-y-1">
               {filteredOptions.map((option) => (
-                <div key={option} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded">
+                <div
+                  key={option}
+                  className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded"
+                >
                   <Checkbox
                     id={`${label}-${option}`}
                     checked={selectedValues.includes(option)}
-                    onCheckedChange={(checked) => 
+                    onCheckedChange={(checked) =>
                       handleCheckboxChange(option, checked as boolean)
                     }
                   />
-                  <label 
+                  <label
                     htmlFor={`${label}-${option}`}
                     className="flex items-center gap-2 text-sm cursor-pointer flex-1"
                   >
@@ -154,12 +187,14 @@ export function CollapsibleFilterField({
               ))}
             </div>
           </>
-        )
+        );
 
-      case 'radio':
+      case "radio":
         return (
           <>
-            <div className="relative">
+          {
+            shouldRenderSearchInput &&
+              <div className="relative">
               <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <Input
                 placeholder="Search"
@@ -168,13 +203,23 @@ export function CollapsibleFilterField({
                 className="pl-8 text-sm border-gray-200"
               />
             </div>
-            
-            <RadioGroup value={selectedValues[0] || ""} onValueChange={handleRadioChange}>
+          }
+
+            <RadioGroup
+              value={selectedValues[0] || ""}
+              onValueChange={handleRadioChange}
+            >
               <div className="max-h-48 overflow-y-auto space-y-1">
                 {filteredOptions.map((option) => (
-                  <div key={option} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded">
+                  <div
+                    key={option}
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded"
+                  >
                     <RadioGroupItem value={option} id={`${label}-${option}`} />
-                    <Label htmlFor={`${label}-${option}`} className="text-sm cursor-pointer flex-1">
+                    <Label
+                      htmlFor={`${label}-${option}`}
+                      className="text-sm cursor-pointer flex-1"
+                    >
                       {option}
                     </Label>
                   </div>
@@ -182,74 +227,48 @@ export function CollapsibleFilterField({
               </div>
             </RadioGroup>
           </>
-        )
+        );
 
-      case 'range':
+      case "range":
         return (
           <div className="space-y-4">
             <div className="px-2">
               <Slider
-                value={rangeValue}
-                onValueChange={handleRangeChange}
-                max={14}
+                getAriaLabel={() => 'Temperature range'}
+                value={value}
+                onChange={handleChange}
+                valueLabelDisplay="auto"
+                getAriaValueText={valuetext}
                 min={0}
-                step={1}
-                className="w-full"
+                max={14}
               />
               <div className="flex justify-between text-sm text-gray-600 mt-2">
-                <span>{rangeValue[0]} years</span>
-                <span>{rangeValue[1]} years</span>
+                <span>{value[0]} years</span>
+                <span>{value[1]} years</span>
               </div>
             </div>
           </div>
-        )
+        );
 
-      case 'date_picker':
+      case "date_picker":
         return (
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <Label className="text-sm font-medium">From</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-start text-left font-normal">
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {dateFrom ? format(dateFrom, "PPP") : "Pick a date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={dateFrom}
-                      onSelect={(date) => handleDateChange(date, true)}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
+            {dateRange?.from && dateRange?.to && (
+              <div className="text-sm text-gray-600 p-2 bg-gray-50 rounded">
+                Selected: {format(dateRange.from, "MMM dd, yyyy")} - {format(dateRange.to, "MMM dd, yyyy")}
               </div>
-              
-              <div>
-                <Label className="text-sm font-medium">To</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-start text-left font-normal">
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {dateTo ? format(dateTo, "PPP") : "Pick a date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={dateTo}
-                      onSelect={(date) => handleDateChange(date, false)}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
+            )}
+            <DayPicker
+              mode="range"
+              numberOfMonths={2}
+              selected={dateRange}
+              onSelect={handleDateRangeChange}
+              className="rounded-md border p-3 bg-white shadow-sm"
+              showOutsideDays={true}
+              fixedWeeks={true}
+            />
           </div>
-        )
+        );
 
       default:
         return (
@@ -263,18 +282,21 @@ export function CollapsibleFilterField({
                 className="pl-8 text-sm border-gray-200"
               />
             </div>
-            
+
             <div className="max-h-48 overflow-y-auto space-y-1">
               {filteredOptions.map((option) => (
-                <div key={option} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded">
+                <div
+                  key={option}
+                  className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded"
+                >
                   <Checkbox
                     id={`${label}-${option}`}
                     checked={selectedValues.includes(option)}
-                    onCheckedChange={(checked) => 
+                    onCheckedChange={(checked) =>
                       handleCheckboxChange(option, checked as boolean)
                     }
                   />
-                  <label 
+                  <label
                     htmlFor={`${label}-${option}`}
                     className="flex items-center gap-2 text-sm cursor-pointer flex-1"
                   >
@@ -284,33 +306,56 @@ export function CollapsibleFilterField({
               ))}
             </div>
           </>
-        )
+        );
     }
-  }
+  };
 
+  const renderBadgeSelectedFilter = (
+    fieldKey: FILTER_FIELDS_KEY,
+    value?: any
+  ) => {
+    if (fieldKey === FILTER_FIELDS_KEY.TOTAL_EXPS) {
+      return <BadgeCustom title={value} color="indigo" condition={true} />;
+    }
+    console.log("check key", fieldKey, "check value", value);
+    return (
+      <BadgeCustom title={`${value.length}`} color="indigo" condition={true} />
+    );
+  };
   return (
     <div className={`space-y-2 ${className}`}>
       <Accordion type="single" collapsible>
-        <AccordionItem value="item-1" className="border-b border-gray-200 hover:bg-white">
+        <AccordionItem
+          value="item-1"
+          className="border-b border-gray-200 hover:bg-white"
+        >
           <AccordionTrigger className="flex items-center justify-between w-full bg-white transition-colors">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 justify-between w-full">
               <span className="font-medium text-gray-900">{label}</span>
+              {selectedValues.length > 0 &&
+                renderBadgeSelectedFilter(fieldKey, selectedValues)}
             </div>
           </AccordionTrigger>
-          
+
           <AccordionContent className="mt-2 space-y-2 px-2">
             {renderContent()}
-            
-            {filteredOptions.length > 6 && type !== 'range' && type !== 'date_picker' && (
-              <div className="text-start">
-                <button className="text-violet-700 text-sm hover:text-violet-800">
-                  More...
-                </button>
-              </div>
-            )}
+
+            {filteredOptions.length > 6 &&
+              type !== "range" &&
+              type !== "date_picker" && (
+                <div className="text-start">
+                  <Button
+                    variant={"ghost"}
+                    onClick={() => {}}
+                    className="text-violet-700 text-sm hover:text-violet-800"
+                  >
+                    More...
+                  </Button>
+                </div>
+              )}
           </AccordionContent>
         </AccordionItem>
       </Accordion>
     </div>
-  )
+  );
 }

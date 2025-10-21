@@ -5,13 +5,34 @@ export interface FilterOption {
   dotColor?: string;
 }
 
+export const FILTER_FIELDS_KEY = {
+  SKILLS: "skills",
+  POSITION: "position",
+  TOTAL_EXPS: "totalExps",
+  TALENT_LEVEL: "talentLevel",
+  PARTNERS: "partners",
+  AVAILABILITY: "availability",
+  VERIFIED_PROFILE: "verifiedProfile",
+  PROFILE_STATUS: "profileStatus",
+  LANGUAGE: "language",
+  TALENT_STATUS: "talentStatus",
+  INTERNAL: "internal",
+  CREATED_DATE: "createdDate",
+} as const;
+export type FILTER_FIELDS_KEY =
+  (typeof FILTER_FIELDS_KEY)[keyof typeof FILTER_FIELDS_KEY];
+
 export interface FilterField {
-  key: string;
+  key: FILTER_FIELDS_KEY;
+  type: "skills" | "checkboxes" | "range" | "radio" | "date_picker";
   label: string;
-  options: FilterOption[];
+  options?: FilterOption[] | string[] | number[];
+  value?: any;
+  from?: number | string;
+  to?: number | string;
 }
 
-export const filterFields = [
+export const filterFields: FilterField[] = [
   {
     type: "skills",
     key: "skills",
@@ -84,7 +105,14 @@ export const filterFields = [
     type: "checkboxes",
     key: "language",
     label: "Language",
-    options: ["Vietnamese", "English", 'Japanese', 'French', 'Korean', 'Chinese'],
+    options: [
+      "Vietnamese",
+      "English",
+      "Japanese",
+      "French",
+      "Korean",
+      "Chinese",
+    ],
   },
   {
     type: "checkboxes",
@@ -124,10 +152,37 @@ export const defaultFilters: Record<string, string[]> = {
 
 export type FilterValues = typeof defaultFilters;
 
-
 export const SKILL_OPTIONS = [
-  'Ajax', 'Algorithms', 'Android', 'Angular', 'ASP.NET', 'AWS', 'Azure', 'Bootstrap',
-  'C#', 'C++', 'CSS', 'Docker', 'Express.js', 'Firebase', 'Git', 'HTML', 'Java',
-  'JavaScript', 'jQuery', 'Kubernetes', 'Laravel', 'MongoDB', 'MySQL', 'Node.js',
-  'PHP', 'Python', 'React', 'Redis', 'Ruby', 'SQL', 'TypeScript', 'Vue.js'
-]
+  "Ajax",
+  "Algorithms",
+  "Android",
+  "Angular",
+  "ASP.NET",
+  "AWS",
+  "Azure",
+  "Bootstrap",
+  "C#",
+  "C++",
+  "CSS",
+  "Docker",
+  "Express.js",
+  "Firebase",
+  "Git",
+  "HTML",
+  "Java",
+  "JavaScript",
+  "jQuery",
+  "Kubernetes",
+  "Laravel",
+  "MongoDB",
+  "MySQL",
+  "Node.js",
+  "PHP",
+  "Python",
+  "React",
+  "Redis",
+  "Ruby",
+  "SQL",
+  "TypeScript",
+  "Vue.js",
+];

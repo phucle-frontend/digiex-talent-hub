@@ -4,7 +4,6 @@ import {
   FileDown,
   ListFilter,
   SquarePlus,
-  SearchIcon,
   CircleCheck,
   CircleMinus,
   PanelRight,
@@ -42,7 +41,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { TalentStatus } from "@/data/talents";
+import { TALENT_STATUS } from "@/data/talents";
 
 const SkillsDisplay = ({
   skills,
@@ -85,7 +84,7 @@ const TalentsTable = ({
   filterValues: Record<string, string[]>;
 }) => {
   return (
-    <Table className="max-w-[600px]">
+    <Table className="">
       <TableHeader className={`bg-gray-50`}>
         <TableRow>
           <TableHead className="w-[140px] text-start">Name</TableHead>
@@ -230,9 +229,9 @@ const TalentsTable = ({
             <TableCell className="text-start w-[80px]">
               <span className="truncate block text-xs">
                 {talent.createdDate
-                  .toLocaleDateString("en-US", {
-                    month: "2-digit",
+                  .toLocaleDateString("en-GB", {
                     day: "2-digit",
+                    month: "2-digit",
                     year: "numeric",
                     hour: "2-digit",
                     minute: "2-digit",
@@ -245,9 +244,9 @@ const TalentsTable = ({
               <span className="truncate block text-xs">
                 {talent.updatedDate
                   ? talent.updatedDate
-                      .toLocaleDateString("en-US", {
-                        month: "2-digit",
+                      .toLocaleDateString("en-GB", {
                         day: "2-digit",
+                        month: "2-digit",
                         year: "numeric",
                         hour: "2-digit",
                         minute: "2-digit",
@@ -258,12 +257,12 @@ const TalentsTable = ({
               </span>
             </TableCell>
             <TableCell className="text-start w-[80px]">
-              <Select value={talent.status} onValueChange={(v) => {}}>
+              <Select value={talent.status} onValueChange={() => {}}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(TalentStatus).map(([key, value]) => (
+                  {Object.entries(TALENT_STATUS).map(([key, value]) => (
                     <SelectItem key={key} value={value}>
                       {key}
                     </SelectItem>
@@ -307,7 +306,6 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
     useState<Record<string, string[]>>(defaultFilters);
   const [appliedValues, setAppliedValues] =
     useState<Record<string, string[]>>(defaultFilters);
-  const [hasSearched, setHasSearched] = useState<boolean>(false);
   const [isVerticalFilterOpen, setIsVerticalFilterOpen] = useState(false);
 
   const getActiveFilterCount = () => {
@@ -320,10 +318,16 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
   };
 
   return (
-    <div className="w-full flex-1 gap-4 flex overflow-hidden">
-      {isVerticalFilterOpen && (
-        <div className="w-80 flex-shrink-0 border-1 rounded-md border-gray-200 p-4">
-          <div className="space-y-4">
+    <div className={`w-full flex-1 ${isVerticalFilterOpen ? "gap-4" : null} flex overflow-hidden`}>
+      <div className={`relative duration-400 ease-in-out flex-shrink-0 ${isVerticalFilterOpen ? "w-60" : "w-0"}`}>
+        <div
+          className={`overflow-hidden border rounded-md border-gray-200 bg-white transition-all duration-400 ease-in-out ${isVerticalFilterOpen ? "p-4" : ""}`}
+        >
+          <div
+            className={`space-y-4 ${
+              !isVerticalFilterOpen && "pointer-events-none"
+            }`}
+          >
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-lg">Filter</h3>
               <Button
@@ -332,7 +336,6 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
                 onClick={() => {
                   setControlledValues(defaultFilters);
                   setAppliedValues(defaultFilters);
-                  setHasSearched(false);
                 }}
                 className="text-violet-600 hover:text-violet-700"
               >
@@ -340,10 +343,11 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
                 Clear All
               </Button>
             </div>
-            <div className="space-y-4">
+            <div>
               {filterFields.map((field) => (
                 <div key={field.key} className="space-y-2">
                   <CollapsibleFilterField
+                    fieldKey={field.key}
                     label={field.label}
                     selectedValues={controlledValues?.[field.key] ?? []}
                     options={
@@ -358,64 +362,21 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
                       };
                       setControlledValues(newValues);
                       setAppliedValues(newValues);
-                      setHasSearched(true);
                     }}
                     type={field.type}
-                    value={field.value}
                     from={field.from}
                     to={field.to}
                   />
                 </div>
               ))}
             </div>
-
-            <div className="flex flex-col gap-2 pt-4">
-              <Button
-                variant="outline"
-                onClick={() => setIsVerticalFilterOpen(false)}
-                className="border-gray-200"
-              >
-                Close
-              </Button>
-            </div>
           </div>
         </div>
-      )}
+      </div>
 
       <div
-        className={`flex-1 ${
-          isVerticalFilterOpen ? "max-w-[72rem]" : "w-full"
-        } border border-gray-200 rounded-lg bg-white min-w-0 overflow-hidden flex flex-col`}
+        className={`flex-1 w-full border border-gray-200 rounded-lg bg-white min-w-0 overflow-hidden flex flex-col`}
       >
-        <div className="flex justify-between items-center">
-          {hasSearched && (
-            <div className="flex items-center gap-2 w-full justify-end">
-              <Button
-                className="flex gap-2 items-center text-violet-700 border-none bg-transparent shadow-none"
-                variant={"outline"}
-                onClick={() => {
-                  setControlledValues(defaultFilters);
-                  setAppliedValues(defaultFilters);
-                  setHasSearched(false);
-                }}
-              >
-                <CircleX />
-                Clear Filter
-              </Button>
-              <Button
-                className="flex gap-2 items-center border-gray-300"
-                variant={"outline"}
-                onClick={() => {
-                  setControlledValues(appliedValues);
-                  setIsVerticalFilterOpen(true);
-                }}
-              >
-                <ListFilter size={16} />
-                Filter more
-              </Button>
-            </div>
-          )}
-        </div>
         <div className="flex-1 overflow-hidden">
           {handleFilterTalents({
             search: searchValue,
@@ -479,7 +440,7 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
                   </Button>
                 </div>
               </div>
-              <div className="flex-1 overflow-x-auto">
+              <div className="flex-1 overflow-x-auto ">
                 <TalentsTable
                   search={searchValue}
                   filterValues={appliedValues}
@@ -491,7 +452,6 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
               clearSearch={() => {
                 setControlledValues(defaultFilters);
                 setAppliedValues(defaultFilters);
-                setHasSearched(false);
               }}
             />
           )}
@@ -536,7 +496,7 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
 export function TalentsPage({ searchValue }: { searchValue: string }) {
   return (
     <div className="w-full h-full flex-1 space-y-12">
-      <div className="space-y-4 h-full max-w-screen-2xl ">
+      <div className="space-y-4 h-full w-full ">
         <TalentsContent searchValue={searchValue} />
       </div>
     </div>

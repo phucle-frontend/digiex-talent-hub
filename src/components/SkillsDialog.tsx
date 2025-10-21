@@ -75,7 +75,7 @@ export function SkillsDialog({ selectedSkills, onSkillsChange }: SkillsDialogPro
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild className='self-start'>
         <Button variant="outline" size="sm" className="gap-2 border-gray-200">
           <Plus className="w-4 h-4" />
         </Button>
@@ -150,9 +150,7 @@ export function SkillsDialog({ selectedSkills, onSkillsChange }: SkillsDialogPro
                 </Button>
               )}
             </div>
-          ))}
-          
-          {/* Auto-add row on skill select; explicit add button removed */}
+          ))}          
         </div>
         
         <div className="flex justify-end gap-2 pt-4">
