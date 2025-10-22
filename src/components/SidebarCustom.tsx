@@ -3,7 +3,6 @@ import { useState, type JSX } from "react";
 import { Button } from "./ui/button";
 import BreadcrumCustom from "./BreadcrumCustom";
 import SearchInput from "./SearchInput";
-import { TalentsPage } from "@/pages/Talents";
 
 function SidebarCustom({
   page,
@@ -28,10 +27,10 @@ function SidebarCustom({
     standardRatio[1]
   );
   return (
-    <div className=" flex w-full bg-gray-100">
+    <div className="h-screen flex w-full bg-gray-100">
       <div
         style={{ width: `${ratioSidebarAndContent[0]}%` }}
-        className={` duration-400 max-h-screen p-4 ease-in-out `}
+        className={`duration-400 h-screen p-4 ease-in-out`}
       >
         <div
           onMouseEnter={() => setRatioSidebarAndContent(standardRatio[1])}
@@ -61,11 +60,11 @@ function SidebarCustom({
       </div>
       <div
         style={{ width: `${ratioSidebarAndContent[1]}%` }}
-        className={`flex duration-400 ease-in-out flex-col p-4`}
+        className="flex duration-400 h-screen py-4 ease-in-out flex-col"
       >
         <SidebarContent>
           <>
-            <header className="flex h-16 shrink-0 items-center justify-between gap-2 px-4 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+            <header className="flex shrink-0 items-center justify-between gap-2 mr-4 px-4 py-4 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
               <BreadcrumCustom />
               <SearchInput
                 placeholder="Search by Email/Name"
@@ -73,7 +72,9 @@ function SidebarCustom({
                 onChange={setSearchValue}
               />
             </header>
-            {page}
+            <div className="flex-1 overflow-y-auto">
+              {page}
+            </div>
           </>
         </SidebarContent>
       </div>
@@ -82,7 +83,7 @@ function SidebarCustom({
 }
 
 const SidebarContent = ({ children }: { children: JSX.Element }) => {
-  return <div className="bg-white rounded-md ">{children}</div>;
+  return <div className="bg-white rounded-md mr-4 overflow-hidden h-full flex flex-col">{children}</div>;
 };
 
 export default SidebarCustom;

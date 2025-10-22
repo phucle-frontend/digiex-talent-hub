@@ -1,7 +1,7 @@
 export interface TalentSkill {
   name: string;
   yoe: number; 
-  competency: 'BEGINNER' | 'EXPERIENCED' | 'ADVANCED' | 'EXPERT';
+  competency: COMPETENCY
 }
 
 export interface Talent {
@@ -72,6 +72,14 @@ export const AVAILABILITY = {
   UNAVAILABLE: 'Unavailable'
 } as const;
 export type AVAILABILITY = typeof AVAILABILITY[keyof typeof AVAILABILITY]; 
+
+export const COMPETENCY = {
+  BEGINNER: 'BEGINNER',
+EXPERIENCED: 'EXPERIENCED',
+ADVANCED: 'ADVANCED',
+EXPERT: 'EXPERT'
+} as const;
+export type COMPETENCY = typeof COMPETENCY[keyof typeof COMPETENCY]; 
 
 export const talents: Talent[] = [
   {

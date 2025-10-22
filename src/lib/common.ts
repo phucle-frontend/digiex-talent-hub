@@ -24,7 +24,7 @@ export const handleFilterTalents = ({
     .filter((t) => {
       const f = filterValues;
 
-      if (f.skills && f.skills.length > 0) {
+      if (f.skills && f.skills.length ) {
         const talentSkills = t.skills || [];
         const hasMatchingSkill = f.skills.some((filterSkill) => {
           const parts = filterSkill.split("|").map((p) => p.trim());
@@ -106,7 +106,7 @@ export const handleFilterTalents = ({
 
         if (
           !f.profileStatus
-            .includes(t.profileStatus ? t.profileStatus : "")
+            .includes(t.profileStatus|| "")
         )
           return false;
       }

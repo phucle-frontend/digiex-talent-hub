@@ -52,7 +52,7 @@ export function CollapsibleFilterField({
         }
       : undefined
   );
-  const [value, setValue] = useState<number[]>([0, 14]);
+  const [value, setValue] = useState([0, 14]);
 
   function valuetext(v: number) {
     return `${v}`;
@@ -89,7 +89,7 @@ export function CollapsibleFilterField({
     onSelectionChange([`${newValue[0]}-${newValue[1]}`]);
   };
 
-  const handleDateRangeChange = (newDateRange: DateRange | undefined) => {
+  const handleDateRangeChange = (newDateRange?: DateRange) => {
     console.log("Date range changed:", newDateRange);
     setDateRange(newDateRange);
 
@@ -351,12 +351,12 @@ export function CollapsibleFilterField({
   };
   return (
     <div className={`space-y-2 ${className}`}>
-      <Accordion type="single" collapsible>
+      <Accordion type="single"  collapsible>
         <AccordionItem
           value="item-1"
-          className="border-b border-gray-200 hover:bg-white"
+          className="border-b  border-gray-200 hover:bg-white"
         >
-          <AccordionTrigger className="flex items-center justify-between w-full bg-white transition-colors">
+          <AccordionTrigger className="flex items-center  justify-between w-full bg-white py-3 transition-colors">
             <div className="flex items-center gap-2 justify-between w-full">
               <span className="font-medium text-gray-900">{label}</span>
               {selectedValues.length > 0 &&

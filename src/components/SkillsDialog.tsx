@@ -6,12 +6,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Input } from './ui/input'
 import BadgeCustom from './BadgeCustom'
 import { SKILL_OPTIONS } from '@/config/filterConfig'
+import type { COMPETENCY } from '@/data/talents'
 
 interface SkillRow {
   id: string
   name: string
   yoe: number
-  competency: 'BEGINNER' | 'EXPERIENCED' | 'ADVANCED' | 'EXPERT'
+  competency: COMPETENCY
 }
 
 interface SkillsDialogProps {

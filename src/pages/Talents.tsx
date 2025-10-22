@@ -48,7 +48,7 @@ const SkillsDisplay = ({
 }: {
   skills: { name: string; yoe: number; competency: string }[] | null;
 }) => {
-  if (!skills || skills.length === 0) return <span>-</span>;
+  if (!skills || !skills.length ) return <span>-</span>;
 
   const displaySkills = skills.slice(0, 2);
   const remainingCount = skills.length - 2;
@@ -258,7 +258,7 @@ const TalentsTable = ({
             </TableCell>
             <TableCell className="text-start w-[80px]">
               <Select value={talent.status} onValueChange={() => {}}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[120px]">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -318,10 +318,20 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
   };
 
   return (
-    <div className={`w-full flex-1 ${isVerticalFilterOpen ? "gap-4" : null} flex overflow-hidden`}>
-      <div className={`relative duration-400 ease-in-out flex-shrink-0 ${isVerticalFilterOpen ? "w-60" : "w-0"}`}>
+    <div
+      className={`w-full flex-1 ${
+        isVerticalFilterOpen ? "gap-4" : null
+      } flex overflow-hidden h-full`}
+    >
+      <div
+        className={`relative duration-400 ease-in-out flex-shrink-0 ${
+          isVerticalFilterOpen ? "w-60" : "w-0"
+        }`}
+      >
         <div
-          className={`overflow-hidden rounded-md border-gray-200 bg-white transition-all duration-400 ease-in-out ${isVerticalFilterOpen ? "p-4" : ""}`}
+          className={`overflow-hidden rounded-md border-gray-200 bg-white transition-all duration-400 ease-in-out ${
+            isVerticalFilterOpen ? "p-4" : ""
+          }`}
         >
           <div
             className={`space-y-4 ${
@@ -337,13 +347,13 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
                   setControlledValues(defaultFilters);
                   setAppliedValues(defaultFilters);
                 }}
-                className="text-violet-600 hover:text-violet-700"
+                className="text-gray-600 hover:text-gray-700"
               >
                 <CircleX className="w-4 h-4" />
                 Clear All
               </Button>
             </div>
-            <div>
+            <div className=" overflow-y-auto">
               {filterFields.map((field) => (
                 <div key={field.key} className="space-y-2">
                   <CollapsibleFilterField
@@ -375,15 +385,14 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
       </div>
 
       <div
-        className={`flex-1 w-full border border-gray-200 rounded-lg bg-white min-w-0 overflow-hidden flex flex-col`}
+        className={`flex-1 w-full border border-gray-200 rounded-lg flex flex-col h-full`}
       >
-        <div className="flex-1 overflow-hidden">
-          {handleFilterTalents({
+          {!!handleFilterTalents({
             search: searchValue,
             filterValues: appliedValues,
-          })?.length > 0 ? (
-            <div className="h-full flex flex-col ">
-              <div className="items-center flex justify-between p-3 flex-shrink-0">
+          })?.length ? (
+            <div className="flex flex-col h-full">
+              <div className="items-center flex justify-between p-2 flex-shrink-0">
                 <div className="flex items-center gap-2">
                   <div className="relative">
                     <Button
@@ -404,7 +413,7 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
                         title={`${getActiveFilterCount()}`}
                         color="indigo"
                         condition={false}
-                        className="absolute -top-2 -right-2 bg-violet-500 text-white text-xs rounded-full px-2 bg-violet-100 border-1 border-violet-600 text-violet-700 flex items-center justify-center"
+                        className="absolute -top-2 -right-2 text-xs rounded-full px-2 bg-violet-100 border-1 border-violet-600 text-violet-700 flex items-center justify-center"
                       />
                     )}
                   </div>
@@ -440,11 +449,13 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
                   </Button>
                 </div>
               </div>
-              <div className="flex-1 overflow-x-auto ">
-                <TalentsTable
-                  search={searchValue}
-                  filterValues={appliedValues}
-                />
+              <div className="flex-1 overflow-hidden">
+                <div className="h-full overflow-auto">
+                  <TalentsTable
+                    search={searchValue}
+                    filterValues={appliedValues}
+                  />
+                </div>
               </div>
             </div>
           ) : (
@@ -455,12 +466,11 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
               }}
             />
           )}
-
-          {handleFilterTalents({
+          {!!handleFilterTalents({
             search: searchValue,
             filterValues: appliedValues,
-          })?.length > 0 && (
-            <div className="w-full mt-4 flex justify-center ">
+          })?.length  && (
+            <div className="w-full flex justify-center flex-shrink-0 p-2">
               <Pagination>
                 <PaginationContent className=" w-full justify-between flex">
                   <PaginationItem>
@@ -488,15 +498,14 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
             </div>
           )}
         </div>
-      </div>
     </div>
   );
 }
 
 export function TalentsPage({ searchValue }: { searchValue: string }) {
   return (
-    <div className="w-full h-full flex-1 space-y-12">
-      <div className="space-y-4 px-4 h-full w-full mb-4">
+    <div className="w-full px-4 ">
+      <div className=" w-full">
         <TalentsContent searchValue={searchValue} />
       </div>
     </div>
