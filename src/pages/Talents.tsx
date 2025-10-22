@@ -299,7 +299,7 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
   return (
     <div
       className={`w-full flex-1 ${
-        isVerticalFilterOpen ? "gap-4" : null
+        isVerticalFilterOpen ? "gap-4 pb-4" : null
       } flex overflow-hidden h-full `}
     >
       <div
