@@ -286,6 +286,7 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
   const [appliedValues, setAppliedValues] =
     useState<Record<string, string[]>>(defaultFilters);
   const [isVerticalFilterOpen, setIsVerticalFilterOpen] = useState(false);
+  const [expandedFilterField, setExpandedFilterField] = useState<string | null>(null);
 
   const getActiveFilterCount = () => {
     let count = 0;
@@ -294,6 +295,18 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
       if (values && values.length > 0) count++;
     });
     return count;
+  };
+
+  const handleVerticalFilterToggle = () => {
+    const newIsOpen = !isVerticalFilterOpen;
+    setIsVerticalFilterOpen(newIsOpen);
+    if (!newIsOpen) {
+      setExpandedFilterField(null);
+    }
+  };
+
+  const handleFilterFieldExpandedChange = (fieldKey: string | null) => {
+    setExpandedFilterField(fieldKey);
   };
 
   return (
@@ -355,6 +368,8 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
                     type={field.type}
                     from={field.from}
                     to={field.to}
+                    isExpanded={expandedFilterField === field.key}
+                    onExpandedChange={handleFilterFieldExpandedChange}
                   />
                 </div>
               ))}
@@ -382,7 +397,7 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
                     className={`${
                       isVerticalFilterOpen ? "rotate-180 " : " "
                     } border-gray-200`}
-                    onClick={() => setIsVerticalFilterOpen((v) => !v)}
+                    onClick={handleVerticalFilterToggle}
                   >
                     {isVerticalFilterOpen ? (
                       <PanelRight size={16} />

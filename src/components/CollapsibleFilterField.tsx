@@ -30,6 +30,8 @@ interface CollapsibleFilterFieldProps {
   fieldKey: FILTER_FIELDS_KEY;
   from?: any;
   to?: any;
+  isExpanded?: boolean;
+  onExpandedChange?: (fieldKey: FILTER_FIELDS_KEY | null) => void;
 }
 
 export function CollapsibleFilterField({
@@ -42,6 +44,8 @@ export function CollapsibleFilterField({
   fieldKey,
   from,
   to,
+  isExpanded = false,
+  onExpandedChange,
 }: CollapsibleFilterFieldProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [dateRange, setDateRange] = useState<DateRange | undefined>(
@@ -374,7 +378,16 @@ console.log('cehck search term', searchTerm, 'check option', allOptions, filtere
   };
   return (
     <div className={`space-y-2 ${className}`}>
-      <Accordion type="single"  collapsible>
+      <Accordion 
+        type="single" 
+        collapsible 
+        value={isExpanded ? "item-1" : ""}
+        onValueChange={(value) => {
+          if (onExpandedChange) {
+            onExpandedChange(value === "item-1" ? fieldKey : null);
+          }
+        }}
+      >
         <AccordionItem
           value="item-1"
           className="border-b  border-gray-200 hover:bg-white"
