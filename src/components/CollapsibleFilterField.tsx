@@ -379,7 +379,7 @@ console.log('cehck search term', searchTerm, 'check option', allOptions, filtere
           value="item-1"
           className="border-b  border-gray-200 hover:bg-white"
         >
-          <AccordionTrigger className="flex items-center  justify-between w-full bg-white py-3 transition-colors">
+          <AccordionTrigger className="flex items-center cursor-pointer justify-between w-full bg-white py-3 transition-colors">
             <div className="flex items-center gap-2 justify-between w-full">
               <span className="font-medium text-gray-900">{label}</span>
               {selectedValues.length > 0 &&
