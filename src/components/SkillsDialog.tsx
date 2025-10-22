@@ -4,7 +4,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from './ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 import { Input } from './ui/input'
-import BadgeCustom from './BadgeCustom'
 import { COMPETENCY, SKILL_OPTIONS } from '@/data/talents'
 
 interface SkillRow {
@@ -24,22 +23,12 @@ interface SkillsDialogProps {
 const YOE_OPTIONS = Array.from({ length: 21 }, (_, i) => i)
 const COMPETENCY_OPTIONS = Object.entries(COMPETENCY).map(item => item[1])
 
-export function SkillsDialog({ selectedSkills, onSkillsChange }: SkillsDialogProps) {
+export function SkillsDialog({  onSkillsChange }: SkillsDialogProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [skillRows, setSkillRows] = useState<SkillRow[]>([
     { id: '1', name: '', yoe: 0, competency:  COMPETENCY_OPTIONS[1] }
   ])
   const [skillSearch, setSkillSearch] = useState('')
-
-  const handleAddRow = () => {
-    const newRow: SkillRow = {
-      id: Date.now().toString(),
-      name: '',
-      yoe: 0,
-      competency: COMPETENCY_OPTIONS[1]
-    }
-    setSkillRows([...skillRows, newRow])
-  }
 
   const handleRemoveRow = (id: string) => {
     if (skillRows.length > 1) {
