@@ -53,7 +53,7 @@ export default function BadgeCustom({ title, color= 'gray', condition, className
   )
 }
 
-export const BadgeCustomEvaluation = ({ title, color, condition, className }: BadgeCustomProps) => {
+export const BadgeCustomEvaluation = ({ title, condition, className }: BadgeCustomProps) => {
   
   const colorEvaluation = title === FEEDBACK_COMMENT.VERY_GOOD
       ? "green"
