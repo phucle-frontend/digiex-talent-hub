@@ -254,18 +254,45 @@ export function CollapsibleFilterField({
         return (
           <div className="space-y-4">
             {dateRange?.from && dateRange?.to && (
-              <div className="text-sm text-gray-600 p-2 bg-gray-50 rounded">
-                Selected: {format(dateRange.from, "MMM dd, yyyy")} - {format(dateRange.to, "MMM dd, yyyy")}
+              <div className="text-xs text-gray-600 p-2 bg-gray-50 rounded">
+                {format(dateRange.from, "MMM dd, yyyy")} - {format(dateRange.to, "MMM dd, yyyy")}
               </div>
             )}
             <DayPicker
               mode="range"
-              numberOfMonths={2}
+              numberOfMonths={1}
               selected={dateRange}
               onSelect={handleDateRangeChange}
               className="rounded-md border p-3 bg-white shadow-sm"
               showOutsideDays={true}
               fixedWeeks={true}
+              modifiers={{
+                range_start: dateRange?.from,
+                range_end: dateRange?.to,
+                range_middle: dateRange?.from && dateRange?.to ? 
+                  Array.from({ length: Math.ceil((dateRange.to.getTime() - dateRange.from.getTime()) / (1000 * 60 * 60 * 24)) - 1 }, (_, i) => {
+                    const date = new Date(dateRange.from!);
+                    date.setDate(date.getDate() + i + 1);
+                    return date;
+                  }) : []
+              }}
+              modifiersStyles={{
+                range_start: {
+                  backgroundColor: '#3b82f6',
+                  color: 'white',
+                  borderRadius: '6px 0 0 6px'
+                },
+                range_end: {
+                  backgroundColor: '#3b82f6',
+                  color: 'white',
+                  borderRadius: '0 6px 6px 0'
+                },
+                range_middle: {
+                  backgroundColor: '#dbeafe',
+                  color: '#1e40af',
+                  borderRadius: '0'
+                }
+              }}
             />
           </div>
         );

@@ -321,7 +321,7 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
     <div className={`w-full flex-1 ${isVerticalFilterOpen ? "gap-4" : null} flex overflow-hidden`}>
       <div className={`relative duration-400 ease-in-out flex-shrink-0 ${isVerticalFilterOpen ? "w-60" : "w-0"}`}>
         <div
-          className={`overflow-hidden border rounded-md border-gray-200 bg-white transition-all duration-400 ease-in-out ${isVerticalFilterOpen ? "p-4" : ""}`}
+          className={`overflow-hidden rounded-md border-gray-200 bg-white transition-all duration-400 ease-in-out ${isVerticalFilterOpen ? "p-4" : ""}`}
         >
           <div
             className={`space-y-4 ${
@@ -496,7 +496,7 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
 export function TalentsPage({ searchValue }: { searchValue: string }) {
   return (
     <div className="w-full h-full flex-1 space-y-12">
-      <div className="space-y-4 h-full w-full ">
+      <div className="space-y-4 px-4 h-full w-full mb-4">
         <TalentsContent searchValue={searchValue} />
       </div>
     </div>
