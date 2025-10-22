@@ -1,4 +1,6 @@
+import { FEEDBACK_COMMENT } from "@/data/talents"
 import { cn } from "@/lib/utils"
+import { CircleAlert, Laugh, ThumbsUp } from "lucide-react"
 
 type BadgeColor =
   | "green"
@@ -12,9 +14,10 @@ type BadgeColor =
 
 type BadgeCustomProps = {
   title: string
-  color: BadgeColor
+  color?: BadgeColor
   condition: boolean
   className?: string
+  icon?: React.ReactNode
 }
 
 const COLOR_STYLES: Record<BadgeColor, { bg: string; border: string; text: string }> = {
@@ -30,13 +33,13 @@ const COLOR_STYLES: Record<BadgeColor, { bg: string; border: string; text: strin
 
 const GRAY_STYLE = { bg: "bg-gray-100", border: "border-gray-300", text: "text-gray-800" }
 
-export default function BadgeCustom({ title, color, condition, className }: BadgeCustomProps) {
+export default function BadgeCustom({ title, color= 'gray', condition, className, icon }: BadgeCustomProps) {
   const palette = condition ? COLOR_STYLES[color] : GRAY_STYLE
 
   return (
     <div
       className={cn(
-        "rounded-full text-xs font-medium inline-flex items-center justify-center px-2 py-0.5",
+        "rounded-full text-xs font-medium inline-flex items-center justify-center gap-1 px-2 py-0.5",
         "border",
         palette.bg,
         palette.border,
@@ -44,7 +47,23 @@ export default function BadgeCustom({ title, color, condition, className }: Badg
         className
       )}
     >
+      {icon       }
       {title}
     </div>
   )
 }
+
+export const BadgeCustomEvaluation = ({ title, color, condition, className }: BadgeCustomProps) => {
+  
+  const colorEvaluation = title === FEEDBACK_COMMENT.VERY_GOOD
+      ? "green"
+      : title === FEEDBACK_COMMENT.GOOD
+      ? "blue"
+      : "amber";
+      const iconEvaluation = title === FEEDBACK_COMMENT.VERY_GOOD
+      ? <Laugh className="w-3 h-3 text-green-600" />
+      : title === FEEDBACK_COMMENT.GOOD
+      ? <ThumbsUp className="w-3 h-3 text-blue-600" />
+      : <CircleAlert className="w-3 h-3 text-amber-600" />;
+  return <BadgeCustom title={title} color={colorEvaluation} condition={condition} icon={iconEvaluation} className={className} />;
+};

@@ -1,3 +1,6 @@
+import { AVAILABILITY, INTERNAL, LANGUAGE, PARTNER, POSITION, PROFILE_STATUS, TALENT_STATUS } from "@/data/talents";
+import { randomGeneratorSkill } from "@/lib/common";
+
 export interface FilterOption {
   value: string;
   label: string;
@@ -22,9 +25,18 @@ export const FILTER_FIELDS_KEY = {
 export type FILTER_FIELDS_KEY =
   (typeof FILTER_FIELDS_KEY)[keyof typeof FILTER_FIELDS_KEY];
 
+export const FILTER_FIELDS_TYPE = {
+  CHECKBOXES: "checkboxes",
+  RADIO: "radio",
+  RANGE: "range",
+  DATE_PICKER: "date_picker",
+  SKILLS: "skills"
+} as const;
+export type FILTER_FIELDS_TYPE = (typeof FILTER_FIELDS_TYPE)[keyof typeof FILTER_FIELDS_TYPE];
+
 export interface FilterField {
   key: FILTER_FIELDS_KEY;
-  type: "skills" | "checkboxes" | "range" | "radio" | "date_picker";
+  type: FILTER_FIELDS_TYPE;
   label: string;
   options?: FilterOption[] | string[] | number[];
   value?: any;
@@ -34,100 +46,79 @@ export interface FilterField {
 
 export const filterFields: FilterField[] = [
   {
-    type: "skills",
+    type: FILTER_FIELDS_TYPE.SKILLS,
     key: "skills",
     label: "Skills",
     value: [
-      { name: "Android", yoe: 6, competency: "EXPERT" },
-      { name: "Angular", yoe: 2, competency: "ADVANCED" },
-      { name: "React", yoe: 3, competency: "EXPERT" },
-      { name: "Java", yoe: 4, competency: "ADVANCED" },
+      { name: randomGeneratorSkill(), yoe: 6, competency: "EXPERT" },
+      { name: randomGeneratorSkill(), yoe: 2, competency: "ADVANCED" },
+      { name: randomGeneratorSkill(), yoe: 3, competency: "EXPERT" },
+      { name: randomGeneratorSkill(), yoe: 4, competency: "ADVANCED" },
     ],
   },
   {
-    type: "checkboxes",
+    type: FILTER_FIELDS_TYPE.CHECKBOXES,
     key: "position",
     label: "Position",
-    options: [
-      "3D Artist/Design",
-      "AI Engineer",
-      "Backend Engineer",
-      "Frontend Engineer",
-      "Cloud Engineer",
-      "CTO",
-      "Data Analyst",
-    ],
+    options: Object.entries(POSITION).map(item => item[1]),
   },
   {
-    type: "range",
+    type: FILTER_FIELDS_TYPE.RANGE,
     key: "totalExps",
     label: "Total Experience",
     from: 0,
     to: 14,
   },
   {
-    type: "checkboxes",
+    type: FILTER_FIELDS_TYPE.CHECKBOXES,
     key: "talentLevel",
     label: "Level",
     options: [1, 2, 3, 4, 5],
   },
   {
-    type: "checkboxes",
+    type: FILTER_FIELDS_TYPE.CHECKBOXES,
     key: "partners",
     label: "Partners",
-    options: ["Aloha", "Manh", "Partner New"],
+    options: Object.entries(PARTNER).map(item => item[1]),
   },
   {
-    type: "radio",
+    type: FILTER_FIELDS_TYPE.RADIO,
     key: "availability",
     label: "Job Availability",
-    options: ["Available", "Unavailable"],
+    options: Object.entries(AVAILABILITY).map(item => item[1]),
   },
   {
-    type: "radio",
+    type: FILTER_FIELDS_TYPE.RADIO,
     key: "verifiedProfile",
     label: "Verify Profile",
     options: ["Verified", "Not Verified"],
   },
   {
-    type: "checkboxes",
+    type: FILTER_FIELDS_TYPE.CHECKBOXES,
     key: "profileStatus",
     label: "Profile Status",
-    options: [
-      "Manual",
-      "Converted",
-      "Email Verified",
-      "Basic Info Completed",
-      "Profile Completed",
-    ],
+    options: Object.entries(PROFILE_STATUS).map(item => item[1]),
   },
   {
-    type: "checkboxes",
+    type: FILTER_FIELDS_TYPE.CHECKBOXES,
     key: "language",
     label: "Language",
-    options: [
-      "Vietnamese",
-      "English",
-      "Japanese",
-      "French",
-      "Korean",
-      "Chinese",
-    ],
+    options: Object.entries(LANGUAGE).map(item => item[1]),
   },
   {
-    type: "checkboxes",
+    type: FILTER_FIELDS_TYPE.CHECKBOXES,
     key: "talentStatus",
     label: "Talent Status",
-    options: ["Active", "Pending", "Deactivate"],
+    options: Object.entries(TALENT_STATUS).map(item => item[1]),
   },
   {
-    type: "radio",
+    type: FILTER_FIELDS_TYPE.RADIO,
     key: "internal",
     label: "Internal",
-    options: ["LinkedIn", "Internal", "External"],
+    options: Object.entries(INTERNAL).map(item => item[1]),
   },
   {
-    type: "date_picker",
+    type: FILTER_FIELDS_TYPE.DATE_PICKER,
     key: "createdDate",
     label: "Created Date",
     from: "Mon Aug 20 2025 15:01:43 GMT+0700 (Indochina Time)",
@@ -152,37 +143,4 @@ export const defaultFilters: Record<string, string[]> = {
 
 export type FilterValues = typeof defaultFilters;
 
-export const SKILL_OPTIONS = [
-  "Ajax",
-  "Algorithms",
-  "Android",
-  "Angular",
-  "ASP.NET",
-  "AWS",
-  "Azure",
-  "Bootstrap",
-  "C#",
-  "C++",
-  "CSS",
-  "Docker",
-  "Express.js",
-  "Firebase",
-  "Git",
-  "HTML",
-  "Java",
-  "JavaScript",
-  "jQuery",
-  "Kubernetes",
-  "Laravel",
-  "MongoDB",
-  "MySQL",
-  "Node.js",
-  "PHP",
-  "Python",
-  "React",
-  "Redis",
-  "Ruby",
-  "SQL",
-  "TypeScript",
-  "Vue.js",
-];
+

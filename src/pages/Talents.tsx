@@ -32,7 +32,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import ButtonIcon from "@/components/ButtonIcon";
-import BadgeCustom from "@/components/BadgeCustom";
+import BadgeCustom, { BadgeCustomEvaluation } from "@/components/BadgeCustom";
 import { handleFilterTalents } from "@/lib/common";
 import {
   Select,
@@ -48,7 +48,7 @@ const SkillsDisplay = ({
 }: {
   skills: { name: string; yoe: number; competency: string }[] | null;
 }) => {
-  if (!skills || !skills.length ) return <span>-</span>;
+  if (!skills || !skills.length) return <span>-</span>;
 
   const displaySkills = skills.slice(0, 2);
   const remainingCount = skills.length - 2;
@@ -151,15 +151,8 @@ const TalentsTable = ({
             </TableCell>
             <TableCell className="text-start w-[80px]">
               {talent.profileFeedback ? (
-                <BadgeCustom
+                <BadgeCustomEvaluation
                   title={talent.profileFeedback}
-                  color={
-                    talent.profileFeedback === "Very Good"
-                      ? "green"
-                      : talent.profileFeedback === "Good"
-                      ? "blue"
-                      : "amber"
-                  }
                   condition={true}
                   className="text-xs"
                 />
@@ -172,15 +165,8 @@ const TalentsTable = ({
             </TableCell>
             <TableCell className="text-start w-[70px]">
               {talent.background ? (
-                <BadgeCustom
+                <BadgeCustomEvaluation
                   title={talent.background}
-                  color={
-                    talent.background === "Very Good"
-                      ? "green"
-                      : talent.background === "Good"
-                      ? "blue"
-                      : "amber"
-                  }
                   condition={true}
                   className="text-xs"
                 />
@@ -190,15 +176,8 @@ const TalentsTable = ({
             </TableCell>
             <TableCell className="text-start w-[70px]">
               {talent.technical ? (
-                <BadgeCustom
+                <BadgeCustomEvaluation
                   title={talent.technical}
-                  color={
-                    talent.technical === "Very Good"
-                      ? "green"
-                      : talent.technical === "Good"
-                      ? "blue"
-                      : "amber"
-                  }
                   condition={true}
                   className="text-xs"
                 />
@@ -258,13 +237,13 @@ const TalentsTable = ({
             </TableCell>
             <TableCell className="text-start w-[80px]">
               <Select value={talent.status} onValueChange={() => {}}>
-                <SelectTrigger className="w-[120px]">
+                <SelectTrigger className="w-[120px] cursor-pointer">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
                   {Object.entries(TALENT_STATUS).map(([key, value]) => (
                     <SelectItem key={key} value={value}>
-                      {key}
+                      {value}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -279,7 +258,7 @@ const TalentsTable = ({
 
 const TalentNotFound = ({ clearSearch }: { clearSearch: () => void }) => {
   return (
-    <div className="flex flex-col h-full flex-1 gap-2 -mt-16 items-center justify-center">
+    <div className="flex flex-col h-full flex-1 p-4 gap-2 items-center justify-center">
       <strong className="text-lg font-bold">No Talents Found</strong>
       <p className="text-muted-foreground text-sm">
         Your search did not match any Talents. Please try again.
@@ -321,7 +300,7 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
     <div
       className={`w-full flex-1 ${
         isVerticalFilterOpen ? "gap-4" : null
-      } flex overflow-hidden h-full`}
+      } flex overflow-hidden h-full `}
     >
       <div
         className={`relative duration-400 ease-in-out flex-shrink-0 ${
@@ -329,8 +308,8 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
         }`}
       >
         <div
-          className={`overflow-hidden rounded-md border-gray-200 bg-white transition-all duration-400 ease-in-out ${
-            isVerticalFilterOpen ? "p-4" : ""
+          className={`overflow-hidden rounded-md border-gray-200  h-full bg-white transition-all duration-400 ease-in-out ${
+            isVerticalFilterOpen ? "p-4 border" : ""
           }`}
         >
           <div
@@ -385,119 +364,122 @@ function TalentsContent({ searchValue }: { searchValue: string }) {
       </div>
 
       <div
-        className={`flex-1 w-full border border-gray-200 rounded-lg flex flex-col h-full`}
+        className={`flex-1 w-20 border  ${handleFilterTalents({
+          search: searchValue,
+          filterValues: appliedValues,
+        })?.length > 0 || 'min-h-screen'} border-gray-200 rounded-lg flex flex-col h-full `}
       >
-          {!!handleFilterTalents({
-            search: searchValue,
-            filterValues: appliedValues,
-          })?.length ? (
-            <div className="flex flex-col h-full">
-              <div className="items-center flex justify-between p-2 flex-shrink-0">
-                <div className="flex items-center gap-2">
-                  <div className="relative">
-                    <Button
-                      variant={"outline"}
-                      className={`${
-                        isVerticalFilterOpen ? "rotate-180 " : " "
-                      } border-gray-200`}
-                      onClick={() => setIsVerticalFilterOpen((v) => !v)}
-                    >
-                      {isVerticalFilterOpen ? (
-                        <PanelRight size={16} />
-                      ) : (
-                        <ListFilter size={16} />
-                      )}
-                    </Button>
-                    {getActiveFilterCount() > 0 && !isVerticalFilterOpen && (
-                      <BadgeCustom
-                        title={`${getActiveFilterCount()}`}
-                        color="indigo"
-                        condition={false}
-                        className="absolute -top-2 -right-2 text-xs rounded-full px-2 bg-violet-100 border-1 border-violet-600 text-violet-700 flex items-center justify-center"
-                      />
-                    )}
-                  </div>
-                  <strong className="font-bold text-lg">Talent members</strong>
-                  <Badge
+        {!!handleFilterTalents({
+          search: searchValue,
+          filterValues: appliedValues,
+        })?.length ? (
+          <div className="flex flex-col h-full">
+            <div className="items-center flex justify-between p-2 flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <Button
                     variant={"outline"}
-                    className="border-violet-200 rounded-full py-0 bg-violet-100 text-violet-700"
+                    className={`${
+                      isVerticalFilterOpen ? "rotate-180 " : " "
+                    } border-gray-200`}
+                    onClick={() => setIsVerticalFilterOpen((v) => !v)}
                   >
-                    {
-                      handleFilterTalents({
-                        search: searchValue,
-                        filterValues: appliedValues,
-                      })?.length
-                    }{" "}
-                    user
-                    {handleFilterTalents({
+                    {isVerticalFilterOpen ? (
+                      <PanelRight size={16} />
+                    ) : (
+                      <ListFilter size={16} />
+                    )}
+                  </Button>
+                  {getActiveFilterCount() > 0 && !isVerticalFilterOpen && (
+                    <BadgeCustom
+                      title={`${getActiveFilterCount()}`}
+                      color="indigo"
+                      condition={false}
+                      className="absolute -top-2 -right-2 text-xs rounded-full px-2 bg-violet-100 border-1 border-violet-600 text-violet-700 flex items-center justify-center"
+                    />
+                  )}
+                </div>
+                <strong className="font-bold text-lg">Talent members</strong>
+                <Badge
+                  variant={"outline"}
+                  className="border-violet-200 rounded-full py-0 bg-violet-100 text-violet-700"
+                >
+                  {
+                    handleFilterTalents({
                       search: searchValue,
                       filterValues: appliedValues,
-                    })?.length > 1 && "s"}
-                  </Badge>
-                </div>
-                <div className="items-center flex gap-2">
-                  <Button
-                    className=" gap-2 flex items-center border-gray-200"
-                    variant={"outline"}
-                  >
-                    <FileDown />
-                    Export
-                  </Button>
-                  <Button className="bg-violet-600 gap-2 flex items-center text-white">
-                    <SquarePlus />
-                    Add Talent
-                  </Button>
-                </div>
+                    })?.length
+                  }{" "}
+                  user
+                  {handleFilterTalents({
+                    search: searchValue,
+                    filterValues: appliedValues,
+                  })?.length > 1 && "s"}
+                </Badge>
               </div>
-              <div className="flex-1 overflow-hidden">
-                <div className="h-full overflow-auto">
-                  <TalentsTable
-                    search={searchValue}
-                    filterValues={appliedValues}
+              <div className="items-center flex gap-2">
+                <Button
+                  className=" gap-2 flex items-center border-gray-200"
+                  variant={"outline"}
+                >
+                  <FileDown />
+                  Export
+                </Button>
+                <Button className="bg-violet-600 gap-2 flex items-center text-white">
+                  <SquarePlus />
+                  Add Talent
+                </Button>
+              </div>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <div className="h-full overflow-x-auto overflow-y-auto">
+                <TalentsTable
+                  search={searchValue}
+                  filterValues={appliedValues}
+                />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <TalentNotFound
+            clearSearch={() => {
+              setControlledValues(defaultFilters);
+              setAppliedValues(defaultFilters);
+            }}
+          />
+        )}
+        {!!handleFilterTalents({
+          search: searchValue,
+          filterValues: appliedValues,
+        })?.length && (
+          <div className="w-full flex justify-center flex-shrink-0 p-2">
+            <Pagination>
+              <PaginationContent className=" w-full justify-between flex">
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    className="border-1 border-gray-200"
+                  ></PaginationPrevious>
+                </PaginationItem>
+                <div className="flex items-center justify-center">
+                  <PaginationItem>
+                    <PaginationLink href="#">1</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                </div>
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    className="border-1 border-gray-200"
                   />
-                </div>
-              </div>
-            </div>
-          ) : (
-            <TalentNotFound
-              clearSearch={() => {
-                setControlledValues(defaultFilters);
-                setAppliedValues(defaultFilters);
-              }}
-            />
-          )}
-          {!!handleFilterTalents({
-            search: searchValue,
-            filterValues: appliedValues,
-          })?.length  && (
-            <div className="w-full flex justify-center flex-shrink-0 p-2">
-              <Pagination>
-                <PaginationContent className=" w-full justify-between flex">
-                  <PaginationItem>
-                    <PaginationPrevious
-                      href="#"
-                      className="border-1 border-gray-200"
-                    ></PaginationPrevious>
-                  </PaginationItem>
-                  <div className="flex items-center justify-center">
-                    <PaginationItem>
-                      <PaginationLink href="#">1</PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationEllipsis />
-                    </PaginationItem>
-                  </div>
-                  <PaginationItem>
-                    <PaginationNext
-                      href="#"
-                      className="border-1 border-gray-200"
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
-          )}
-        </div>
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

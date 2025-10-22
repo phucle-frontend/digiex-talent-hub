@@ -5,8 +5,7 @@ import { Button } from './ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 import { Input } from './ui/input'
 import BadgeCustom from './BadgeCustom'
-import { SKILL_OPTIONS } from '@/config/filterConfig'
-import type { COMPETENCY } from '@/data/talents'
+import { COMPETENCY, SKILL_OPTIONS } from '@/data/talents'
 
 interface SkillRow {
   id: string
@@ -23,12 +22,12 @@ interface SkillsDialogProps {
 
 
 const YOE_OPTIONS = Array.from({ length: 21 }, (_, i) => i)
-const COMPETENCY_OPTIONS = ['BEGINNER', 'EXPERIENCED', 'ADVANCED', 'EXPERT']
+const COMPETENCY_OPTIONS = Object.entries(COMPETENCY).map(item => item[1])
 
 export function SkillsDialog({ selectedSkills, onSkillsChange }: SkillsDialogProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [skillRows, setSkillRows] = useState<SkillRow[]>([
-    { id: '1', name: '', yoe: 0, competency: 'BEGINNER' }
+    { id: '1', name: '', yoe: 0, competency:  COMPETENCY_OPTIONS[1] }
   ])
   const [skillSearch, setSkillSearch] = useState('')
 
@@ -37,7 +36,7 @@ export function SkillsDialog({ selectedSkills, onSkillsChange }: SkillsDialogPro
       id: Date.now().toString(),
       name: '',
       yoe: 0,
-      competency: 'BEGINNER'
+      competency: COMPETENCY_OPTIONS[1]
     }
     setSkillRows([...skillRows, newRow])
   }
@@ -54,7 +53,7 @@ export function SkillsDialog({ selectedSkills, onSkillsChange }: SkillsDialogPro
       if (field === 'name' && typeof value === 'string' && value) {
         const hasEmpty = updated.some(r => !r.name)
         if (!hasEmpty) {
-          updated.push({ id: Date.now().toString(), name: '', yoe: 0, competency: 'BEGINNER' })
+          updated.push({ id: Date.now().toString(), name: '', yoe: 0, competency: COMPETENCY_OPTIONS[1] })
         }
       }
       return updated
@@ -88,7 +87,7 @@ export function SkillsDialog({ selectedSkills, onSkillsChange }: SkillsDialogPro
         </DialogHeader>
         
         <div className="space-y-4">
-          {skillRows.map((row, index) => (
+          {skillRows.map((row) => (
             <div key={row.id} className="flex items-center gap-4 p-4 rounded-lg">
               <div className="flex-1 ">
                 <label className="text-sm font-medium mb-2 block">Skill Name</label>
@@ -105,7 +104,7 @@ export function SkillsDialog({ selectedSkills, onSkillsChange }: SkillsDialogPro
                         className="h-8 text-sm"
                       />
                     </div>
-                    {SKILL_OPTIONS.filter(s => s.toLowerCase().includes(skillSearch.toLowerCase())).map(skill => (
+                    {SKILL_OPTIONS.filter(skillOption => skillOption.toLowerCase().includes(skillSearch.toLowerCase())).map(skill => (
                       <SelectItem key={skill} value={skill}>{skill}</SelectItem>
                     ))}
                   </SelectContent>
@@ -155,10 +154,10 @@ export function SkillsDialog({ selectedSkills, onSkillsChange }: SkillsDialogPro
         </div>
         
         <div className="flex justify-end gap-2 pt-4">
-          <Button variant="outline" onClick={handleCancel}>
+          <Button variant="outline" className='border-gray-200' onClick={handleCancel}>
             Cancel
           </Button>
-          <Button onClick={handleConfirm}>
+          <Button className='bg-violet-700' onClick={handleConfirm}>
             Confirm
           </Button>
         </div>

@@ -14,7 +14,7 @@ import { Button } from "./ui/button";
 import { format } from "date-fns";
 import { SkillsDialog } from "./SkillsDialog";
 import BadgeCustom from "./BadgeCustom";
-import { FILTER_FIELDS_KEY } from "@/config/filterConfig";
+import { FILTER_FIELDS_KEY, FILTER_FIELDS_TYPE } from "@/config/filterConfig";
 import { DayPicker } from "react-day-picker";
 import Slider from "@mui/material/Slider";
 import type { DateRange } from "react-day-picker";
@@ -38,7 +38,7 @@ export function CollapsibleFilterField({
   options,
   onSelectionChange,
   className = "",
-  type = "checkboxes",
+  type = FILTER_FIELDS_TYPE.CHECKBOXES ,
   fieldKey,
   from,
   to,
@@ -54,14 +54,13 @@ export function CollapsibleFilterField({
   );
   const [value, setValue] = useState([0, 14]);
 
-  function valuetext(v: number) {
-    return `${v}`;
-  }
+  const [expandedFilter, setExpandedFilter] = useState<FILTER_FIELDS_KEY | null>(null)
 
-  const allOptions = type === "checkboxes" ? ["All", ...options] : options;
+  const allOptions = type === FILTER_FIELDS_TYPE.CHECKBOXES ? ["All", ...options] : options;
   const filteredOptions = allOptions.filter((option) =>
     option.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+);
+console.log('cehck search term', searchTerm, 'check option', allOptions, filteredOptions)
 
   const handleCheckboxChange = (value: string, checked: boolean) => {
     if (value === "All") {
@@ -110,7 +109,7 @@ export function CollapsibleFilterField({
       FILTER_FIELDS_KEY.POSITION,
     ]?.includes(fieldKey as any);
     switch (type) {
-      case "skills":
+      case FILTER_FIELDS_TYPE.SKILLS:
         return (
           <>
             <div className="space-y-2 flex flex-col justify-start">
@@ -137,7 +136,7 @@ export function CollapsibleFilterField({
           </>
         );
 
-      case "checkboxes":
+      case FILTER_FIELDS_TYPE.CHECKBOXES:
         return (
           <>
             <div className="relative">
@@ -164,8 +163,8 @@ export function CollapsibleFilterField({
               ))}
             </div>
 
-            <div className="max-h-48 overflow-y-auto space-y-1">
-              {filteredOptions.map((option) => (
+            <div className="max-h-72 overflow-y-auto space-y-1">
+              {filteredOptions.slice(0, expandedFilter === fieldKey ? -1 : 5).map((option) => (
                 <div
                   key={option}
                   className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded"
@@ -189,7 +188,7 @@ export function CollapsibleFilterField({
           </>
         );
 
-      case "radio":
+      case FILTER_FIELDS_TYPE.RADIO:
         return (
           <>
           {
@@ -229,28 +228,52 @@ export function CollapsibleFilterField({
           </>
         );
 
-      case "range":
+      case FILTER_FIELDS_TYPE.RANGE:
         return (
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div className="px-2">
+              <div className="flex justify-between">
+                <div className="px-3 py-1 rounded-lg bg-white border border-gray-200 text-gray-700 text-sm shadow-sm">
+                  {value[0]}
+                </div>
+                <div className="px-3 py-1 rounded-lg bg-white border border-gray-200 text-gray-700 text-sm shadow-sm">
+                  {value[1]}
+                </div>
+              </div>
               <Slider
-                getAriaLabel={() => 'Temperature range'}
                 value={value}
                 onChange={handleChange}
-                valueLabelDisplay="auto"
-                getAriaValueText={valuetext}
                 min={0}
                 max={14}
+                sx={{
+                  height: 6,
+                  padding: '15px 0',
+                  '& .MuiSlider-rail': {
+                    color: '#e5e7eb', 
+                    opacity: 1,
+                    height: 6,
+                    borderRadius: 9999,
+                  },
+                  '& .MuiSlider-track': {
+                    color: '#7c3aed',
+                    height: 6,
+                    borderRadius: 9999,
+                  },
+                  '& .MuiSlider-thumb': {
+                    width: 18,
+                    height: 18,
+                    backgroundColor: '#fff',
+                    border: '3px solid #7c3aed',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                    '&:hover, &.Mui-focusVisible': { boxShadow: '0 0 0 8px rgba(124,58,237,0.1)' },
+                  },
+                }}
               />
-              <div className="flex justify-between text-sm text-gray-600 mt-2">
-                <span>{value[0]} years</span>
-                <span>{value[1]} years</span>
-              </div>
             </div>
           </div>
         );
 
-      case "date_picker":
+      case FILTER_FIELDS_TYPE.DATE_PICKER:
         return (
           <div className="space-y-4">
             {dateRange?.from && dateRange?.to && (
@@ -342,11 +365,11 @@ export function CollapsibleFilterField({
     value?: any
   ) => {
     if (fieldKey === FILTER_FIELDS_KEY.TOTAL_EXPS) {
-      return <BadgeCustom title={value} color="indigo" condition={true} />;
+      return <BadgeCustom title={value} color="violet" condition={true} />;
     }
     console.log("check key", fieldKey, "check value", value);
     return (
-      <BadgeCustom title={`${value.length}`} color="indigo" condition={true} />
+      <BadgeCustom title={`${value.length}`} color="violet" condition={true} />
     );
   };
   return (
@@ -367,13 +390,13 @@ export function CollapsibleFilterField({
           <AccordionContent className="mt-2 space-y-2 px-2">
             {renderContent()}
 
-            {filteredOptions.length > 6 &&
+            {filteredOptions.length > 6 && 
               type !== "range" &&
               type !== "date_picker" && (
                 <div className="text-start">
                   <Button
                     variant={"ghost"}
-                    onClick={() => {}}
+                    onClick={() => {setExpandedFilter(fieldKey)}}
                     className="text-violet-700 text-sm hover:text-violet-800"
                   >
                     More...

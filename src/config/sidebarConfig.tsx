@@ -1,4 +1,4 @@
-import { ChartArea } from "lucide-react";
+import { Briefcase, ChartArea, HandCoins, Handshake, ListTodo, Search, Sparkles, UserCog, UserRoundCog } from "lucide-react";
 
 export const sidebarConfig = [
     {
@@ -9,32 +9,42 @@ export const sidebarConfig = [
     {
         key: 'talent',
         title: 'Talents', 
-        icon: <ChartArea className="w-20 h-20" />
+        icon: <Sparkles className="w-20 h-20" />
     },
     {
         key: 'clients',
         title: 'Clients', 
-        icon: <ChartArea className="w-20 h-20" />
+        icon: <Briefcase className="w-20 h-20" />
     },
     {
         key: 'hiringRequest',
         title: 'Hiring Requests', 
-        icon: <ChartArea className="w-20 h-20" />
+        icon: <Search className="w-20 h-20" />
     },
     {
         key: 'evaluations',
         title: 'Evaluations', 
-        icon: <ChartArea className="w-20 h-20" />
+        icon: <ListTodo className="w-20 h-20" />
     },
     {
         key: 'partners',
         title: 'Partners', 
-        icon: <ChartArea className="w-20 h-20" />
+        icon: <Handshake className="w-20 h-20" />
     },
     {
-        key: 'settings',
-        title: 'Settings', 
-        icon: <ChartArea className="w-20 h-20" />
+        key: 'resellers',
+        title: 'Resellers', 
+        icon: <HandCoins className="w-20 h-20" />
+    },
+    {
+        key: 'userSettings',
+        title: 'User Settings', 
+        icon: <UserRoundCog className="w-20 h-20" />
+    },
+    {
+        key: 'groupSettings',
+        title: 'Group Settings', 
+        icon: <UserCog className="w-20 h-20" />
     },
 
 ]
